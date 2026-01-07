@@ -35,19 +35,3 @@ ChatApp/
 | POST | /register | Create user |
 | POST | /login | JWT token |
 | GET  | /chat | WebSocket |
-
-## Demo Screenshots
-
-**Home Page**
-![Home Page](ChatApp/screenshots/home.png)
-
-**Register Page** 
-![Register](ChatApp/screenshots/register.png)
-
-**Login Page**
-![Login](ChatApp/screenshots/login.png)
-
-**Real-time Chat** 
-![Chat UI 1](ChatApp/screenshots/chatUi1.png)
-![Chat UI 2](ChatApp/screenshots/chatUi2.png)
-
