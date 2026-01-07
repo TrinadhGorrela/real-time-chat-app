@@ -39,16 +39,15 @@ ChatApp/
 ## Demo Screenshots
 
 **Home Page**
-![Home](ChatApp/screenshots/home.png)
+![Home Page](ChatApp/screenshots/home.png)
 
-**Register Page**
-![Register UI](ChatApp/screenshots/register.png)
+**Register Page** 
+![Register](ChatApp/screenshots/register.png)
 
 **Login Page**
-![Login UI](ChatApp/screenshots/login.png)
+![Login](ChatApp/screenshots/login.png)
 
-**Real-time Chat**
-![Chat UI](ChatApp/screenshots/chatUi1.png)
-
-![Chat UI](ChatApp/screenshots/chatUi2.png)
+**Real-time Chat** 
+![Chat UI 1](ChatApp/screenshots/chatUi1.png)
+![Chat UI 2](ChatApp/screenshots/chatUi2.png)
 
