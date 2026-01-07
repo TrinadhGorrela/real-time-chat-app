@@ -42,13 +42,13 @@ ChatApp/
 ![Home](ChatApp/screenshots/home.png)
 
 **Register Page**
-![Register UI](ChatApp/screenshots/Register.png)
+![Register UI](ChatApp/screenshots/register.png)
 
 **Login Page**
-![Login UI](ChatApp/screenshots/Login.png)
+![Login UI](ChatApp/screenshots/login.png)
 
 **Real-time Chat**
-![Chat UI](ChatApp/screenshots/chat-ui1.png)
+![Chat UI](ChatApp/screenshots/chatUi1.png)
 
-![Chat UI](ChatApp/screenshots/chat-ui2.png)
+![Chat UI](ChatApp/screenshots/chatUi2.png)
 
