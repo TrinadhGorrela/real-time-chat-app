@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatApp</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/chat.css" />
+    <link rel="icon" type="image/png" href="/image/logo.png" />
+  </head>
+  <body onclick="closeProfileMenu(event)">
+    <div id="notification-toast" style="display: none">
+      <i class="fa-solid fa-message"></i>
+      <span id="toast-msg">New Message</span>
+    </div>
+
+    <div class="app-container">
+      <nav class="nav-strip">
+        <div class="nav-logo" title="ChatApp">
+          <img
+            src="/image/logo.png"
+            alt="Chat Logo"
+            style="width: 45px; height: 40px; object-fit: contain"
+          />
+        </div>
+        <div
+          class="nav-profile"
+          id="profile-btn"
+          onclick="toggleProfileMenu(event)"
+        >
+          <i class="fa-solid fa-user"></i>
+        </div>
+
+        <div class="profile-menu" id="profile-menu">
+          <div class="menu-header">
+            <div style="font-size: 0.8rem">Signed in as</div>
+            <div
+              id="my-name-display"
+              style="font-weight: bold; font-size: 1rem"
+            >
+              User
+            </div>
+          </div>
+          <div class="menu-item" onclick="openModal('addModal')">
+            <i class="fa-solid fa-user-plus"></i> Add Friend
+          </div>
+          <div class="menu-item" onclick="openRequestsModal()">
+            <i class="fa-solid fa-envelope"></i> Requests
+            <span id="request-badge" class="notification-badge" style="display:none; margin-left:8px;">0</span>
+          </div>
+          <div class="menu-item" style="color: #ef4444" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </div>
+        </div>
+      </nav>
+
+   <aside class="sidebar">
+  <div class="sidebar-top">
+    <h3 class="heading">Chat Application</h3>
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="search-bar" placeholder="Search" oninput="filterContacts(this.value)"/>
+      </div>
+    </div>
+  </div>
+  <div id="user-list" class="user-list"></div>
+</aside>
+
+      <main class="chat-area">
+        <div
+          id="welcome-screen"
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+          "
+        >
+          <h2 style="color: #54656f">Welcome to ChatApp</h2>
+          <p style="color: #8696a0">Select a chat to start messaging</p>
+        </div>
+
+   <div class="chat-header" id="chat-header" style="display: none">
+  <!-- Main flex row: Avatar | (Name+Status) | Menu -->
+  <div style="display: flex; align-items: center; flex: 1; gap: 10px;">
+    
+    <!-- Avatar -->
+    <div class="user-avatar" style="width: 40px; height: 40px; flex-shrink: 0;">
+      <img src="/image/User.jpg" alt="Profile" />
+    </div>
+    
+    <!-- Name + Status (vertical column) -->
+    <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+      <span id="chat-user-name" style="font-weight: 600; font-size: 1.1rem; color: #111b21;">
+        User
+      </span>
+      
+      <!-- Status directly below name -->
+      <div id="status-container" style="font-size: 0.75rem; color: #8696a0; margin-top: 2px;">
+        <div id="user-status" style="display: flex; align-items: center; gap: 5px;">
+          <span id="status-indicator" style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #31a24c;"></span>
+          <span id="status-text">Online</span>
+        </div>
+        
+        <div id="typing-indicator" style="display: none; font-style: italic;">
+          Typing...
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="user-actions">
+    <button class="kebab-btn" onclick="toggleHeaderMenu(event)">
+      <i class="fa-solid fa-ellipsis-vertical"></i>
+    </button>
+    <div id="header-menu" class="action-dropdown">
+      <div class="action-item danger" onclick="deleteCurrentFriend()">
+        <i class="fa-solid fa-trash"></i> Delete Friend
+      </div>
+    </div>
+  </div>
+</div>
+
+        <div id="chat-messages" class="messages" style="display: none"></div>
+
+        <div class="input-area" id="input-area" style="display: none">
+          <input
+            type="text"
+            id="msg-input"
+            class="msg-input"
+            placeholder="Message"
+            onkeypress="handleEnter(event)"
+            oninput="onTyping()"
+          />
+          <button class="send-btn" onclick="sendMessage()">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <div id="addModal" class="modal">
+      <div class="modal-content">
+        <h3>Add Friend</h3>
+        <input
+          type="email"
+          id="search-email"
+          style="
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+          "
+          placeholder="Email"
+        />
+        <button
+          onclick="sendFriendRequest()"
+          style="
+            background: #00a884;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+          "
+        >
+          Send
+        </button>
+        <button
+          onclick="closeModal('addModal')"
+          style="
+            background: none;
+            border: none;
+            margin-left: 10px;
+            cursor: pointer;
+            color: #00a884;
+          "
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <div id="reqModal" class="modal">
+  <div class="modal-content">
+    <h3>Friend Requests</h3>
+    <div id="req-list-container" style="max-height: 300px; overflow-y: auto; margin: 15px 0;">
+      </div>
+    <button onclick="closeModal('reqModal')" style="cursor:pointer; color:#54656f; background:none; border:none;">
+      Close
+    </button>
+  </div>
+</div>
+    </div>
+
+    <script src="/js/chat.js"></script>
+
+    <script>
+      // Toggle Profile Menu
+      function toggleProfileMenu(e) {
+        e.stopPropagation();
+        const menu = document.getElementById("profile-menu");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+      }
+
+      // Close Menu when clicking outside
+      function closeProfileMenu(e) {
+        const menu = document.getElementById("profile-menu");
+        if (menu) menu.style.display = "none";
+      }
+
+      // Toggle Header Kebab Menu
+      function toggleHeaderMenu(e) {
+        e.stopPropagation();
+        const menu = document.getElementById("header-menu");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+      }
+
+      // Modal Functions
+      function openModal(id) {
+        document.getElementById(id).style.display = "flex";
+      }
+      function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+      }
+
+      // Logout Logic
+      function logout() {
+        localStorage.clear();
+        window.location.href = "/login.html";
+      }
+    </script>
+  </body>
+</html>
