@@ -7,9 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,9 @@ public class ChatController {
     // ============================================
     // 1. SENDING MESSAGES (WebSocket)
     // ============================================
-    @MessageMapping("/chat.sendMessage")
+    @MessageMapping("/chat")
+    @SendToUser("/queue/private-chat") 
+    @Transactional
     public Message sendMessage(@Payload Message chatMessage) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String senderEmail = auth != null ? auth.getName() : null;
@@ -40,6 +43,13 @@ public class ChatController {
 
         senderEmail = senderEmail.trim().toLowerCase();
         String receiverEmail = chatMessage.getReceiver().trim().toLowerCase();
+
+        if (chatMessage.getContent() == null)
+            chatMessage.setContent("");
+        if (chatMessage.getFileUrl() == null)
+            chatMessage.setFileUrl("");
+        if (chatMessage.getFileName() == null)
+            chatMessage.setFileName("");
 
         chatMessage.setSender(senderEmail);
         chatMessage.setReceiver(receiverEmail);
@@ -56,6 +66,7 @@ public class ChatController {
     // 2. READ RECEIPT (WebSocket)
     // ============================================
     @MessageMapping("/chat.readMessage")
+    @SendToUser("/queue/read-receipts")
     public void sendReadReceipt(@Payload Message receipt) {
         if (receipt.getReceiver() != null) {
             String originalSender = receipt.getReceiver();

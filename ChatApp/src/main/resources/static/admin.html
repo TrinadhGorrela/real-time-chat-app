@@ -229,7 +229,6 @@
         const errorDiv = document.getElementById("error-msg");
 
         try {
-          // Test the password against the /admin/users endpoint
           const res = await fetch("http://localhost:8081/admin/users", {
             headers: { "admin-password": input },
           });
@@ -239,7 +238,7 @@
             document.getElementById("login-overlay").style.display = "none";
             document.getElementById("dashboard").style.display = "block";
             loadAdminData();
-            setInterval(loadAdminData, 10000); // Auto-refresh every 10 seconds
+            setInterval(loadAdminData, 10000);
           } else {
             errorDiv.style.display = "block";
           }
@@ -252,7 +251,6 @@
         if (!adminToken) return;
 
         try {
-          // 1. Load Users
           const uRes = await fetch("http://localhost:8081/admin/users", {
             headers: { "admin-password": adminToken },
           });
@@ -271,13 +269,11 @@
             )
             .join("");
 
-          // 2. Load Messages
           const mRes = await fetch("http://localhost:8081/admin/messages", {
             headers: { "admin-password": adminToken },
           });
           const msgs = await mRes.json();
           const mTable = document.getElementById("msgs-table");
-          // Show latest messages first
           mTable.innerHTML = msgs
             .reverse()
             .map(
@@ -294,7 +290,6 @@
             )
             .join("");
 
-          // 3. Load Contacts
           const cRes = await fetch("http://localhost:8081/admin/contacts", {
             headers: { "admin-password": adminToken },
           });

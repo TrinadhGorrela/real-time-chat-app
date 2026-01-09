@@ -1,4 +1,3 @@
-// StatusController.java
 package com.chatapp.controller;
 
 import com.chatapp.entity.User;
@@ -17,13 +16,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/chatapp/status")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8081")
 public class StatusController {
 
     @Autowired
     private UserRepository userRepository;
 
-    // Mark user as online
     @PostMapping("/online")
     public ResponseEntity<?> setOnline() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -43,7 +41,6 @@ public class StatusController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
-    // Mark user as offline
     @PostMapping("/offline")
     public ResponseEntity<?> setOffline() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -65,7 +62,6 @@ public class StatusController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
-    // Get friend's online status
     @GetMapping("/check/{email}")
     public ResponseEntity<?> checkStatus(@PathVariable String email) {
         User user = userRepository.findByEmail(email);
@@ -79,7 +75,6 @@ public class StatusController {
         return ResponseEntity.notFound().build();
     }
 
-    // WebSocket status updates (optional live presence)
     @MessageMapping("/status.update")
     @SendTo("/topic/status")
     public Map<String, Object> updateStatus(@Payload Map<String, String> statusUpdate) {

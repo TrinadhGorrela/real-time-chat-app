@@ -1,5 +1,4 @@
 :root {
-  /* COLORS: Using your original variables but added depth */
   --wa-teal: #00a884;
   --wa-green-btn: #25d366;
   --wa-dark: #111b21;
@@ -8,7 +7,6 @@
   --wa-recv-bubble: #ffffff;
   --wa-gray-text: #54656f;
 
-  /* NEW: Effects to attract users */
   --bubble-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
   --wa-blue-tick: #53bdeb;
 }
@@ -34,7 +32,7 @@ html{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 80px; /* Slightly taller for modern spacing */
+  height: 80px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -53,7 +51,7 @@ html{
 }
 
 .nav-links a:hover {
-  opacity: 0.7; /* Soft feedback on hover */
+  opacity: 0.7; 
 }
 
 /* --- 2. BUTTONS --- 
@@ -64,28 +62,25 @@ html{
   border-radius: 50px;
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s ease; /* Smooth transition for all changes */
+  transition: all 0.3s ease; 
   border: none;
   cursor: pointer;
 
-  /* common base shadow */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
 }
 
 .btn:hover {
-  transform: translateY(-3px); /* Lifts the button up */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35); /* Stronger glow */
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
-/* Register button (green) */
 .btn-green {
   background-color: var(--wa-green-btn);
   color: #ffffff;
 }
 
-/* Login button (black) */
 .btn-black {
-  background-color: #111b21; /* dark WhatsApp-like black */
+  background-color: #111b21;
   color: #ffffff;
 }
 
@@ -116,10 +111,9 @@ html{
   position: relative;
   width: 380px;
   margin-right: 5%;
-  animation: floating 4s ease-in-out infinite; /* Floating effect */
+  animation: floating 4s ease-in-out infinite;
 }
 
-/* ANIMATION: Makes the whole chat section drift up and down */
 @keyframes floating {
   0% {
     transform: translateY(0px);
@@ -224,7 +218,6 @@ html{
   transform: scale(1.1);
 }
 
-/* BLUE TICKS */
 .fa-check-double {
   color: var(--wa-blue-tick);
 }
@@ -309,7 +302,6 @@ html{
   color: var(--wa-gray-text);
 }
 
-/* simple responsive tweak */
 @media (max-width: 900px) {
   .features-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

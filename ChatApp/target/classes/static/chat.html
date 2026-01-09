@@ -88,21 +88,14 @@
         </div>
 
    <div class="chat-header" id="chat-header" style="display: none">
-  <!-- Main flex row: Avatar | (Name+Status) | Menu -->
   <div style="display: flex; align-items: center; flex: 1; gap: 10px;">
-    
-    <!-- Avatar -->
     <div class="user-avatar" style="width: 40px; height: 40px; flex-shrink: 0;">
       <img src="/image/User.jpg" alt="Profile" />
     </div>
-    
-    <!-- Name + Status (vertical column) -->
     <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
       <span id="chat-user-name" style="font-weight: 600; font-size: 1.1rem; color: #111b21;">
         User
       </span>
-      
-      <!-- Status directly below name -->
       <div id="status-container" style="font-size: 0.75rem; color: #8696a0; margin-top: 2px;">
         <div id="user-status" style="display: flex; align-items: center; gap: 5px;">
           <span id="status-indicator" style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #31a24c;"></span>
@@ -130,19 +123,25 @@
 
         <div id="chat-messages" class="messages" style="display: none"></div>
 
-        <div class="input-area" id="input-area" style="display: none">
-          <input
-            type="text"
-            id="msg-input"
-            class="msg-input"
-            placeholder="Message"
-            onkeypress="handleEnter(event)"
-            oninput="onTyping()"
-          />
-          <button class="send-btn" onclick="sendMessage()">
-            <i class="fa-solid fa-paper-plane"></i>
-          </button>
-        </div>
+       <div class="input-area" id="input-area" style="display: none; position: relative;">
+  <input type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.txt" style="display: none;" />
+  <button class="plus-btn" onclick="document.getElementById('fileInput').click()" title="Attach">
+    <i class="fa-solid fa-plus" style="font-size: 1.4rem;"></i>
+  </button>
+
+  <input
+    type="text"
+    id="msg-input"
+    class="msg-input"
+    placeholder="Type a message"
+    onkeypress="handleEnter(event)"
+    oninput="onTyping()"
+  />
+
+  <button class="send-btn" onclick="sendMessage()">
+    <i class="fa-solid fa-paper-plane"></i>
+  </button>
+</div>
       </main>
     </div>
 
@@ -200,43 +199,6 @@
   </div>
 </div>
     </div>
-
-    <script src="/js/chat.js"></script>
-
-    <script>
-      // Toggle Profile Menu
-      function toggleProfileMenu(e) {
-        e.stopPropagation();
-        const menu = document.getElementById("profile-menu");
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
-      }
-
-      // Close Menu when clicking outside
-      function closeProfileMenu(e) {
-        const menu = document.getElementById("profile-menu");
-        if (menu) menu.style.display = "none";
-      }
-
-      // Toggle Header Kebab Menu
-      function toggleHeaderMenu(e) {
-        e.stopPropagation();
-        const menu = document.getElementById("header-menu");
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
-      }
-
-      // Modal Functions
-      function openModal(id) {
-        document.getElementById(id).style.display = "flex";
-      }
-      function closeModal(id) {
-        document.getElementById(id).style.display = "none";
-      }
-
-      // Logout Logic
-      function logout() {
-        localStorage.clear();
-        window.location.href = "/login.html";
-      }
-    </script>
+<script src="/js/chat.js"></script>
   </body>
 </html>

@@ -11,8 +11,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.chatapp.security.JwtAuthFilter;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -21,28 +26,36 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter authFilter) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable()) 
-                .authorizeHttpRequests(auth -> auth
-                        // 1. ALLOW STATIC FILES & ADMIN HTML
-                        .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/chat.html", "/admin.html").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/image/**").permitAll()
-
-                        // 2. ALLOW AUTHENTICATION ENDPOINTS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ CORS ENABLED
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth                      
+                        .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/chat.html",
+                                "/admin.html")
+                        .permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/image/**").permitAll()   
                         .requestMatchers("/chatapp/adduser", "/chatapp/validateuser").permitAll()
-
-                        // 3. ALLOW WEBSOCKETS
                         .requestMatchers("/ws/**").permitAll()
-
                         .requestMatchers("/app/**").permitAll()
-
-                        // 4. ALLOW ADMIN ENDPOINTS (Handled by AdminController's secret password check)
-                        .requestMatchers("/admin/**").permitAll() 
-
-                        // 5. PROTECT CHAT DATA
+                        .requestMatchers("/admin/**").permitAll()
+                        .requestMatchers("/files/**").permitAll()
+                        .requestMatchers("/chatapp/status/**").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

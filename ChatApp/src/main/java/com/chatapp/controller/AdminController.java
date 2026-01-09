@@ -1,9 +1,9 @@
 package com.chatapp.controller;
 
-import com.chatapp.entity.Contact;
+import com.chatapp.entity.Friendship;
 import com.chatapp.entity.Message;
 import com.chatapp.entity.User;
-import com.chatapp.repository.ContactRepo;
+import com.chatapp.repository.FriendshipRepository;
 import com.chatapp.repository.MessageRepo;
 import com.chatapp.repository.UserRepository;
 
@@ -24,11 +24,10 @@ public class AdminController {
     @Autowired
     private MessageRepo messageRepo;
     @Autowired
-    private ContactRepo contactRepo;
+    private FriendshipRepository friendRepo;
 
-    private static final String ADMIN_SECRET = "admin123";
+    private static final String ADMIN_SECRET = "Trinadh462";
 
-    // 1. GET ALL USERS (Secured)
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers(@RequestHeader(value = "admin-password", required = false) String password) {
         if (!ADMIN_SECRET.equals(password)) {
@@ -37,7 +36,6 @@ public class AdminController {
         return ResponseEntity.ok(userRepo.findAll());
     }
 
-    // 2. GET ALL MESSAGES (Secured)
     @GetMapping("/messages")
     public ResponseEntity<?> getAllMessages(
             @RequestHeader(value = "admin-password", required = false) String password) {
@@ -47,13 +45,12 @@ public class AdminController {
         return ResponseEntity.ok(messageRepo.findAll());
     }
 
-    // 3. GET ALL CONTACTS (Secured)
     @GetMapping("/contacts")
     public ResponseEntity<?> getAllContacts(
             @RequestHeader(value = "admin-password", required = false) String password) {
         if (!ADMIN_SECRET.equals(password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access Denied");
         }
-        return ResponseEntity.ok(contactRepo.findAll());
+        return ResponseEntity.ok(friendRepo.findAll());
     }
 }

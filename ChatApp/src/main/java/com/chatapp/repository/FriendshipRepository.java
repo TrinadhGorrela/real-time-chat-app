@@ -7,9 +7,8 @@ import java.util.List;
 
 @Repository
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
-    // Find friends I can actually chat with
+
     List<Friendship> findByUserEmailAndStatus(String userEmail, String status);
     
-    // Check if a connection already exists
     Friendship findByUserEmailAndFriendEmail(String userEmail, String friendEmail);
 }

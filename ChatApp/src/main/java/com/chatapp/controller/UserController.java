@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/chatapp")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8081")
 public class UserController {
 
     @Autowired
@@ -47,7 +47,6 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body(Map.of("message", "Email already exists"));
             }
-            // Encrypt password before saving
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             User savedUser = userRepository.save(user);
             return ResponseEntity.ok(savedUser);
@@ -63,15 +62,12 @@ public class UserController {
     @PostMapping("/validateuser")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
-            // Authenticate using Spring Security
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
-            // Generate JWT Token
             String token = jwtUtil.generateToken(user.getEmail());
             User dbUser = userRepository.findByEmail(user.getEmail());
 
-            // Prepare Response
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("user", Map.of(
@@ -80,7 +76,6 @@ public class UserController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // Return JSON even on failure to avoid "Unexpected end of JSON" error
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Invalid email or password"));
         }
@@ -186,7 +181,6 @@ public class UserController {
         }
 
         try {
-            // Delete BOTH directions of friendship
             Friendship f1 = friendshipRepository.findByUserEmailAndFriendEmail(myEmail, friendEmail);
             Friendship f2 = friendshipRepository.findByUserEmailAndFriendEmail(friendEmail, myEmail);
 
@@ -204,6 +198,25 @@ public class UserController {
             return ResponseEntity.status(500)
                     .body(Map.of("message", "Error deleting contact", "error", e.getMessage()));
         }
+    }
+
+    // ============================================
+    // 8. DECLINE REQUEST
+    // ============================================
+    @PostMapping("/decline")
+    public ResponseEntity<?> declineRequest(@RequestBody Map<String, Long> request, Principal principal) {
+        String myEmail = principal.getName();
+        Long requestId = request.get("id");
+
+        Friendship f = friendshipRepository.findById(requestId).orElse(null);
+
+        if (f != null && f.getUserEmail().equalsIgnoreCase(myEmail)) {
+            friendshipRepository.delete(f);
+            return ResponseEntity.ok(Map.of("message", "Request declined"));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("message", "Invalid request"));
     }
 
 }

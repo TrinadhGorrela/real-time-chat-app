@@ -2,36 +2,56 @@
 
 Full-stack real-time messaging app built during B.Tech project.
 
-## ✨ Features
+##  Features
 - Real-time one-to-one chat (WebSocket/STOMP)
 - JWT Authentication & Authorization
 - Message persistence (MySQL)
 - WhatsApp-style UI (HTML/CSS/JS)
 - Notification sounds & status (sent/delivered)
 
-## 🛠 Tech Stack
+##  Tech Stack
 Spring Boot | WebSocket | JWT | MySQL | Maven | HTML/CSS/JS
 
 
-## 🚀 Quick Start
+##  Quick Start
 ```bash
 mvn spring-boot:run
 
-Register/Login: http://localhost:8081/register or /login
+Home: http://localhost:8081/
+
+Register: http://localhost:8081/register
+
+Login: http://localhost:8081/login
 
 Chat: http://localhost:8081/chat
 
 ChatApp/
 ├── src/main/java/com/chatapp/
-│   ├── controller/     # REST APIs
-│   ├── entity/         # User, Message, Friendship
-│   ├── service/        # Business logic
-│   └── config/         # SecurityConfig, WebSocketConfig
-└── src/main/resources/static/  # Frontend HTML/CSS/JS
+│   ├── config/
+│   ├── controller/
+│   ├── entity/
+│   ├── repository/
+│   ├── security/
+│   ├── service/
+│   └── ChatApplication.java
+├── src/main/resources/
+│   ├── application.properties
+│   └── static/
+│       ├── audio/
+│       ├── css/
+│       ├── image/
+│       ├── js/
+│       ├── admin.html
+│       ├── chat.html
+│       ├── index.html
+│       ├── login.html
+│       └── register.html
+
 
 ## API Endpoints
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /register | Create user |
-| POST | /login | JWT token |
-| GET  | /chat | WebSocket |
+
+| Method | Endpoint  | Description | Authentication |
+| ------ | --------- | ----------- | -------------- |
+| POST   | /register | Create user | None           |
+| POST   | /login    | JWT token   | None           |
+| GET    | /chat     | WebSocket   | JWT            |

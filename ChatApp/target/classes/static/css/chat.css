@@ -2,11 +2,11 @@
   --wa-teal: #00a884;
   --wa-dark-teal: #008f6f;
   --wa-bg-beige: #efeae2;
-  --wa-light-green: #d9fdd3; /* My Message Bubble */
-  --wa-white: #ffffff; /* Other Message Bubble */
+  --wa-light-green: #d9fdd3;
+  --wa-white: #ffffff;
   --wa-text: #111b21;
   --wa-tick-blue: #53bdeb;
-  --nav-strip-color: #202c33; /* Dark Gray for the side strip */
+  --nav-strip-color: #202c33;
 }
 
 * {
@@ -123,7 +123,6 @@ body {
   padding: 5px;
 }
 
-/* Contact row */
 .user-item {
   display: flex;
   align-items: center;
@@ -134,7 +133,7 @@ body {
   color: var(--wa-text);
   border-bottom: 1px solid #f0f2f5;
   transition: background 0.2s;
-  gap: 10px; /* space between avatar, name, badge */
+  gap: 10px; 
 }
 
 .user-item:hover {
@@ -144,7 +143,6 @@ body {
   background: #f0f2f5;
 }
 
-/* Name column takes remaining width */
 .user-item > div:nth-child(2) {
   flex: 1;
 }
@@ -164,7 +162,6 @@ body {
   object-fit: cover;
 }
 
-/* Unread message badge (right of name) */
 .user-item .notification-badge {
   min-width: 18px;
   height: 18px;
@@ -178,10 +175,9 @@ body {
   line-height: 18px;
   text-align: center;
 
-  display: none; /* shown via JS */
+  display: none; 
 }
 
-/* Optional: highlight class when new messages */
 .user-item.has-new-message {
   background: #f0f2f5;
 }
@@ -354,9 +350,8 @@ body {
   background: #f0f2f5;
 }
 
-/* Friend request badge (right side of "Requests") */
 #request-badge.notification-badge {
-  margin-left: auto; /* push to far right */
+  margin-left: auto;
 
   min-width: 18px;
   height: 18px;
@@ -462,14 +457,140 @@ body {
   margin: 25px 40px 10px;
   color: #667781;
   font-size: 13px;
-  background: #f0f2f5;
+  background: transparent;
   padding: 5px 0;
   border-radius: 7px;
   display: inline-block;
   width: auto;
 }
 
-/* Toast animations */
+/* =========================================
+   10. WHATSAPP INPUT + FILE ATTACH (NEW)
+   ======================================== */
+.input-area {
+  padding: 12px 16px;
+  background: #f0f2f5;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  margin: 0 20px 20px;
+}
+
+.plus-btn {
+  background: #e9edef;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #667781;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.plus-btn:hover {
+  background: #dde4e6;
+}
+
+.plus-btn:active {
+  background: #ced7db;
+  transform: scale(0.95);
+}
+
+.msg-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--wa-text);
+  border-radius: 20px;
+}
+
+.msg-input::placeholder {
+  color: #667781;
+}
+
+.msg-input:focus {
+  background: rgba(255,255,255,0.6);
+}
+
+.send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--wa-teal);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: var(--wa-dark-teal);
+}
+
+.send-btn:disabled {
+  background: #a4b0be;
+  cursor: not-allowed;
+}
+
+#uploading-indicator {
+  position: absolute;
+  bottom: 70px;
+  right: 20px;
+  background: var(--wa-teal);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 12px rgba(0,168,132,0.4);
+}
+
+.file-preview {
+  max-width: 280px;
+  padding: 12px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.file-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+
+.file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-info div:first-child {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.file-info div:last-child {
+  font-size: 0.8rem;
+  color: #667781;
+}
+
 @keyframes fadein {
   from {
     top: 0;
