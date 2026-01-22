@@ -8,17 +8,16 @@
 body {
   font-family: "Inter", sans-serif;
   background-color: var(--wa-bg);
-  /* Optional: Chat Doodle Background Pattern */
-  background-image: linear-gradient(
-      rgba(239, 234, 226, 0.9),
-      rgba(239, 234, 226, 0.9)
-    ),
+  background-image:
+    linear-gradient(rgba(239, 234, 226, 0.9), rgba(239, 234, 226, 0.9)),
     url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .login-container {
@@ -29,6 +28,7 @@ body {
   width: 100%;
   max-width: 400px;
   text-align: center;
+  position: relative;
 }
 
 .logo-area img {
@@ -47,7 +47,6 @@ h2 {
   margin-bottom: 30px;
 }
 
-/* Input Group with Icons */
 .input-group {
   position: relative;
   margin-bottom: 20px;
@@ -62,7 +61,6 @@ h2 {
   color: #8696a0;
 }
 
-/* The Eye Icon for Password */
 .toggle-password {
   left: auto !important;
   right: 15px;
@@ -74,7 +72,7 @@ h2 {
 
 .form-control {
   width: 100%;
-  padding: 12px 40px; /* Space for icons */
+  padding: 12px 40px;
   border: 1px solid #e9edef;
   border-radius: 8px;
   font-size: 0.95rem;
@@ -87,7 +85,6 @@ h2 {
   border-color: var(--wa-teal);
 }
 
-/* Buttons */
 .btn-primary {
   width: 100%;
   background-color: var(--wa-green);
@@ -121,7 +118,6 @@ h2 {
   font-weight: 600;
 }
 
-/* Alerts */
 .alert {
   padding: 10px;
   border-radius: 6px;
@@ -139,4 +135,38 @@ h2 {
   background: #dff;
   color: #00a884;
   border: 1px solid #cff;
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 30px 20px;
+
+    width: 100%;
+    box-shadow: none;
+    border-radius: 16px;
+  }
+
+  .subtitle {
+    margin-bottom: 25px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .btn-primary {
+    padding: 14px;
+    font-size: 1.05rem;
+  }
+}
+
+input[type="password"]::-webkit-password-reveal-button,
+input[type="password"]::-webkit-clear-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none !important;
 }

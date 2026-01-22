@@ -25,6 +25,8 @@ Login: http://localhost:8081/login
 
 Chat: http://localhost:8081/chat
 
+ChatApplication Architecture
+
 ChatApp/
 ├── src/main/java/com/chatapp/
 │   ├── config/

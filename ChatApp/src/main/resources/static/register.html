@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -13,7 +13,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="css/register.css">
+    <link rel="stylesheet" href="css/register.css" />
   </head>
   <body>
     <div class="register-container">
@@ -83,6 +83,10 @@
             placeholder="Confirm Password"
             required
           />
+          <i
+            class="fa-regular fa-eye toggle-password"
+            onclick="togglePass('confirmPassword', this)"
+          ></i>
         </div>
 
         <button type="submit" class="btn-primary">Sign Up</button>
@@ -92,6 +96,6 @@
         </div>
       </form>
     </div>
- <script src="js/register.js"></script>
+    <script src="js/register.js"></script>
   </body>
 </html>

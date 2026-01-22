@@ -9,8 +9,8 @@ let stompClient = null;
 let currentReceiverEmail = null;
 let statusCheckInterval;
 let typingTimeout;
-let lastMsgContent = "";
-let lastMsgTime = 0;
+// let lastMsgContent = "";
+// let lastMsgTime = 0;
 
 // ============================================
 // 1. SECURITY CHECK
@@ -64,7 +64,7 @@ function connect() {
         function (message) {
           const msg = JSON.parse(message.body);
           onMessageReceived(msg);
-        }
+        },
       );
 
       stompClient.subscribe("/user/queue/read-receipts", function (receipt) {
@@ -92,7 +92,7 @@ function connect() {
     function (error) {
       console.error("âŒ WS Error:", error);
       setTimeout(connect, 5000);
-    }
+    },
   );
 }
 
@@ -123,7 +123,7 @@ async function onMessageReceived(msg) {
   const isForMe = msgReceiver === myEmailLower;
 
   if (isFromMe && msgReceiver === activeChat) {
-    return; 
+    return;
   }
 
   if (!isForMe) {
@@ -158,7 +158,7 @@ async function onMessageReceived(msg) {
       notificationSound
         .play()
         .catch((e) =>
-          console.log("Audio play failed (user interaction needed first):", e)
+          console.log("Audio play failed (user interaction needed first):", e),
         );
 
       if (document.hidden && Notification.permission === "granted") {
@@ -268,7 +268,7 @@ async function selectUser(name, email, element) {
   try {
     const res = await fetch(
       `http://localhost:8081/chatapp/messages/${myEmail.toLowerCase()}/${currentReceiverEmail.toLowerCase()}`,
-      { headers: { Authorization: "Bearer " + token } }
+      { headers: { Authorization: "Bearer " + token } },
     );
     const history = await res.json();
 
@@ -333,10 +333,6 @@ function appendMessage(msg) {
   const isMe = msg.sender.trim().toLowerCase() === myEmail.trim().toLowerCase();
   const now = Date.now();
 
-  if (isMe && msg.content === lastMsgContent && now - lastMsgTime < 1000) {
-    return;
-  }
-
   const msgContainer = document.getElementById("chat-messages");
   if (!msgContainer) return;
 
@@ -380,7 +376,7 @@ function appendMessage(msg) {
                   msg.fileName
                 }</span>
                 <span style="font-size:10px; color:#666; margin-top:2px;">${formatFileSize(
-                  msg.fileSize || 0
+                  msg.fileSize || 0,
                 )}</span>
               </div>
           </div>
@@ -393,8 +389,8 @@ function appendMessage(msg) {
    onmouseover="this.style.background='rgba(0,0,0,0.1)'" 
    onmouseout="this.style.background='rgba(0,0,0,0.02)'"
    onclick="handleFileOpen(event, '${msg.fileUrl}', '${msg.fileName}', '${
-        msg.messageType || "FILE"
-      }')">
+     msg.messageType || "FILE"
+   }')">
   <i class="fa-solid fa-download" style="color: #54656f; font-size: 16px;"></i>
 </a>
         </div>`;
@@ -403,8 +399,8 @@ function appendMessage(msg) {
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background: rgba(0,0,0,0.05); border-radius:12px 12px 4px 12px; max-width:280px; border:1px solid rgba(0,0,0,0.08); 
                cursor:pointer; transition:background 0.2s;" 
            onclick="handleFileOpen(event, '${msg.fileUrl}', '${
-        msg.fileName
-      }', '${msg.messageType || "FILE"}')"
+             msg.fileName
+           }', '${msg.messageType || "FILE"}')"
            onmouseover="this.style.background='rgba(0,0,0,0.08)'"
            onmouseout="this.style.background='rgba(0,0,0,0.05)'">
       <div style="background:#ffdddd; padding:8px; border-radius:6px; flex-shrink:0;">
@@ -415,7 +411,7 @@ function appendMessage(msg) {
           msg.fileName
         }</div>
         <div style="font-size:11px; color:#667781; font-weight:400;">${formatFileSize(
-          msg.fileSize || 0
+          msg.fileSize || 0,
         )}</div>
       </div>
     </div>`;
@@ -512,32 +508,13 @@ function formatMessageTime(timestamp) {
 
   const date =
     typeof timestamp === "string" ? new Date(timestamp) : new Date(timestamp);
-  const now = new Date();
 
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const messageDate = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate()
-  );
-
-  if (messageDate.getTime() === todayStart.getTime()) {
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  } else if (
-    messageDate.getTime() ===
-    new Date(todayStart.getTime() - 86400000).getTime()
-  ) {
-    return "Yesterday";
-  } else {
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
-  }
+  // Always show time in HH:MM format
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
 }
 
 // ============================================
@@ -658,7 +635,44 @@ function formatTime(timestamp) {
   const diffHours = Math.floor(diffMins / 60);
   if (diffHours < 24) return `${diffHours}h ago`;
 
-  return date.toLocaleDateString();
+  // For more than 24 hours, show date with time
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  // Reset time to midnight for comparison
+  const todayStart = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  );
+  const yesterdayStart = new Date(
+    yesterday.getFullYear(),
+    yesterday.getMonth(),
+    yesterday.getDate(),
+  );
+  const dateStart = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  );
+
+  const time = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  if (dateStart.getTime() === yesterdayStart.getTime()) {
+    return `yesterday at ${time}`;
+  } else {
+    // Show date like "Jan 20 at 09:10 pm"
+    const dateStr = date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+    return `${dateStr} at ${time}`;
+  }
 }
 
 function subscribeToStatusUpdates() {
@@ -686,7 +700,7 @@ function onTyping() {
       sender: myEmail,
       receiver: currentReceiverEmail,
       isTyping: true,
-    })
+    }),
   );
 
   clearTimeout(typingTimeout);
@@ -699,7 +713,7 @@ function onTyping() {
         sender: myEmail,
         receiver: currentReceiverEmail,
         isTyping: false,
-      })
+      }),
     );
   }, 3000);
 }
@@ -826,7 +840,7 @@ async function acceptRequest(id) {
     if (res.ok) {
       alert("Friendship Accepted!");
       closeModal("reqModal");
-      loadData(); 
+      loadData();
       openRequestsModal();
     }
   } catch (e) {
@@ -980,7 +994,7 @@ function appendMessageWithDateHeader(msg) {
   const msgDayStart = new Date(
     msgDate.getFullYear(),
     msgDate.getMonth(),
-    msgDate.getDate()
+    msgDate.getDate(),
   );
 
   const lastMsg = msgContainer.lastElementChild;
@@ -995,7 +1009,7 @@ function appendMessageWithDateHeader(msg) {
       const lastDayStart = new Date(
         lastDate.getFullYear(),
         lastDate.getMonth(),
-        lastDate.getDate()
+        lastDate.getDate(),
       );
       if (lastDayStart.getTime() !== msgDayStart.getTime()) {
         needsHeader = true;
@@ -1148,8 +1162,8 @@ function showMessage(message) {
         <img src="${
           message.fileUrl
         }" alt="Image" style="max-width:250px; max-height:300px; border-radius:8px; cursor:pointer;" onclick="window.open('${
-      message.fileUrl
-    }')">
+          message.fileUrl
+        }')">
         <div class="message-time">${formatTime(message.timestamp)}</div>
       </div>
     `;
@@ -1161,7 +1175,7 @@ function showMessage(message) {
           <div>
             <div style="font-weight:500;">${message.fileName}</div>
             <div style="font-size:0.8rem; color:#666;">${formatFileSize(
-              message.fileSize
+              message.fileSize,
             )}</div>
           </div>
         </div>
@@ -1219,8 +1233,7 @@ function handleFileOpen(event, fileUrl, fileName, fileType) {
       </body>
     </html>
     `);
-  }
-  else {
+  } else {
     const a = document.createElement("a");
     a.href = fileUrl;
     a.download = fileName;
