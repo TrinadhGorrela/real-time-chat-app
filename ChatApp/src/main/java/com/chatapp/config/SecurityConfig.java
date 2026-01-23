@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/chat.html",
                                 "/admin.html")
                         .permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/image/**").permitAll()   
+                        .requestMatchers("/css/**", "/js/**", "/image/**","/audio/**").permitAll()   
                         .requestMatchers("/chatapp/adduser", "/chatapp/validateuser").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/app/**").permitAll()

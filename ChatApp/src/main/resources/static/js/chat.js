@@ -9,8 +9,6 @@ let stompClient = null;
 let currentReceiverEmail = null;
 let statusCheckInterval;
 let typingTimeout;
-// let lastMsgContent = "";
-// let lastMsgTime = 0;
 
 // ============================================
 // 1. SECURITY CHECK
@@ -461,11 +459,6 @@ function appendMessage(msg) {
   `;
   msgContainer.appendChild(div);
 
-  if (isMe) {
-    lastMsgContent = msg.content || msg.fileName || "";
-    lastMsgTime = now;
-  }
-
   scrollToBottom();
 }
 
@@ -616,46 +609,29 @@ function checkFriendStatus() {
           text.innerText = "Online";
         } else {
           indicator.style.background = "#8696a0";
-          text.innerText = "Last seen " + formatTime(data.lastSeen);
+          const formattedTime = formatTime2(data.lastSeen); 
+          text.innerText = "Last seen " + formattedTime;
         }
       }
     })
     .catch((e) => console.log("Status check failed:", e));
 }
 
-function formatTime(timestamp) {
+function formatTime2(timestamp) {
   const date = new Date(timestamp);
   const now = new Date();
   const diffMs = now - date;
-  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
 
-  if (diffMins < 1) return "just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 1) {
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 1) return "just now";
+    return `${diffMins}m ago`;
+  }
 
-  const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
-
-  // For more than 24 hours, show date with time
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  // Reset time to midnight for comparison
-  const todayStart = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-  );
-  const yesterdayStart = new Date(
-    yesterday.getFullYear(),
-    yesterday.getMonth(),
-    yesterday.getDate(),
-  );
-  const dateStart = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-  );
+  if (diffHours < 24) {
+    return `${diffHours}h ago`;
+  }
 
   const time = date.toLocaleTimeString("en-US", {
     hour: "2-digit",
@@ -663,10 +639,17 @@ function formatTime(timestamp) {
     hour12: true,
   });
 
-  if (dateStart.getTime() === yesterdayStart.getTime()) {
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dateStart = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  );
+  const daysDiff = Math.floor((todayStart - dateStart) / (1000 * 60 * 60 * 24));
+
+  if (daysDiff === 1) {
     return `yesterday at ${time}`;
   } else {
-    // Show date like "Jan 20 at 09:10 pm"
     const dateStr = date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
