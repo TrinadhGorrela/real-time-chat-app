@@ -1,0 +1,39 @@
+.welcomeScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex: 1;
+  background-color: #efeae2;
+  overflow: hidden;
+  padding: 20px;
+  text-align: center;
+}
+
+.logo {
+  width: 120px; /* Or whatever size looks best for your logo */
+  height: auto;
+  margin-bottom: 30px;
+  opacity: 0.6; /* Makes it look slightly faded/subtle like a background image */
+}
+
+.welcomeScreen h2 {
+  color: #54656f;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+}
+
+.welcomeScreen p {
+  color: #8696a0;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .welcomeScreen h2 {
+    font-size: 1.1rem;
+  }
+  .welcomeScreen p {
+    font-size: 0.85rem;
+  }
+}

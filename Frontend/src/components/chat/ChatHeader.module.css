@@ -1,0 +1,173 @@
+.chatHeader {
+  padding: 15px 30px;
+  background: #f0f2f5;
+  border-bottom: 1px solid #d1d7db;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Back button — hidden on desktop, shown on mobile */
+.backBtn {
+  display: none;
+  background: none;
+  border: none;
+  color: #00a884;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px 10px 5px 0;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 10px;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #e9edef;
+}
+
+.userAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #111b21;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statusContainer {
+  font-size: 0.75rem;
+  color: #8696a0;
+  margin-top: 2px;
+}
+
+.userStatus {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.statusIndicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #31a24c;
+  flex-shrink: 0;
+}
+
+.statusText {
+  font-size: 0.75rem;
+  color: #8696a0;
+}
+
+.typingIndicator {
+  font-style: italic;
+  color: #00a884;
+}
+
+.userActions {
+  position: relative;
+  margin-left: auto;
+}
+
+.kebabBtn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #54656f;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s;
+}
+
+.kebabBtn:hover {
+  color: #111b21;
+}
+
+.actionDropdown {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  z-index: 100;
+  min-width: 150px;
+}
+
+.actionItem {
+  padding: 10px;
+  cursor: pointer;
+  color: #3b4a54;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.actionItem:hover {
+  background: #f0f2f5;
+}
+
+.actionItem.danger {
+  color: #ef4444;
+}
+
+.actionItem.danger:hover {
+  background: #fef2f2;
+}
+
+.backBtn {
+  display: block; /* Changed from none to block so it shows on desktop! */
+  background: none;
+  border: none;
+  color: #54656f; 
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 8px 12px 8px 0; 
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.backBtn:hover {
+  color: #00a884; /* Lights up green when tapped/hovered */
+}
+
+/* ── Mobile ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .chatHeader {
+    padding: 10px 14px;
+  }
+
+  .backBtn {
+    display: block; /* show ← arrow on mobile */
+  }
+
+  .userName {
+    font-size: 0.95rem;
+  }
+}

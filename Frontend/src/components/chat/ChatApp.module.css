@@ -1,0 +1,77 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* =========================================
+   DESKTOP LAYOUT (Default)
+   ========================================= */
+.appContainer {
+  display: flex;
+  flex-direction: row; /* Ensure items sit side-by-side */
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: white;
+}
+
+.sidebarWrapper {
+  display: flex;
+  flex-shrink: 0;
+  width: 350px; /* FIX: Give the sidebar a strict width on desktop */
+  height: 100%;
+  border-right: 1px solid #e9edef; /* Optional: adds a nice separator line */
+  background: #ffffff;
+}
+
+.chatWrapper {
+  display: flex;
+  flex: 1; /* FIX: Chat takes up all remaining space */
+  min-width: 0;
+  height: 100%;
+  background: #efeae2; /* Optional: standard WhatsApp web chat background */
+}
+
+/* =========================================
+   MOBILE LAYOUT (max-width: 768px)
+   ========================================= */
+
+@media (max-width: 768px) {
+  .appContainer {
+    position: relative;
+  }
+
+  .sidebarWrapper,
+  .chatWrapper {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  /* 🛑 FIX: Sidebar sits BELOW the 56px NavStrip */
+  .sidebarWrapper {
+    top: 56px; 
+    height: calc(100% - 56px); /* Prevents it from scrolling off the bottom */
+    z-index: 1;
+    transform: translateX(0);
+  }
+
+  .sidebarHidden {
+    transform: translateX(-100%);
+  }
+
+  /* Chat takes the FULL screen because NavStrip hides when chat is open */
+  .chatWrapper {
+    top: 0;
+    height: 100%;
+    z-index: 2;
+    transform: translateX(100%);
+  }
+
+  .chatWrapper:not(.chatHidden) {
+    transform: translateX(0);
+  }
+}

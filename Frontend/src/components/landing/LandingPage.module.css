@@ -1,0 +1,373 @@
+:root {
+  --wa-teal: #00a884;
+  --wa-green-btn: #25d366;
+  --wa-dark: #111b21;
+  --wa-bg: #efeae2;
+  --wa-sent-bubble: #d9fdd3;
+  --wa-recv-bubble: #ffffff;
+  --wa-gray-text: #54656f;
+  --bubble-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  --wa-blue-tick: #53bdeb;
+}
+
+.landingPage {
+  font-family: "Segoe UI", "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--wa-teal);
+  padding: 10px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 80px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.logo {
+  color: white;
+  font-weight: 700;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoImage {
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
+}
+
+.navLinks a {
+  text-decoration: none;
+  color: white;
+  margin: 0 15px;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.navLinks a:hover {
+  opacity: 0.7;
+}
+
+.navButtons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 28px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  display: inline-block;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.btnGreen {
+  background-color: var(--wa-green-btn);
+  color: #ffffff;
+}
+
+.btnBlack {
+  background-color: #111b21;
+  color: #ffffff;
+}
+
+.btnLarge {
+  padding: 14px 32px;
+  font-size: 1.05rem;
+}
+
+/* Hero Section */
+.heroContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10%;
+  min-height: calc(100vh - 80px);
+  background-color: var(--wa-bg);
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.heroText {
+  flex: 1;
+  min-width: 280px;
+}
+
+.heroText h1 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  margin-bottom: 20px;
+  color: var(--wa-dark);
+}
+
+.heroText p {
+  font-size: 1rem;
+  max-width: 90%;
+  color: var(--wa-gray-text);
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.ctaGroup {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Hero Visuals */
+.heroVisuals {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  animation: floating 4s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.chatMock {
+  background: #efeae2;
+  border-radius: 24px;
+  padding: 16px 12px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 auto;
+}
+
+.messageWrapper {
+  display: flex;
+}
+
+.messageWrapper.outgoing {
+  justify-content: flex-end;
+}
+
+.messageWrapper.incoming {
+  justify-content: flex-start;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.chatBubble {
+  padding: 10px 14px;
+  max-width: 230px;
+  box-shadow: var(--bubble-shadow);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  position: relative;
+}
+
+.bubbleGreen {
+  background-color: var(--wa-sent-bubble);
+  border-radius: 12px 12px 0 12px;
+}
+
+.bubbleWhite {
+  background-color: var(--wa-recv-bubble);
+  border-radius: 12px 12px 12px 0;
+}
+
+.avatarCircle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #cfd4d7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #111b21;
+  flex-shrink: 0;
+}
+
+.reactions {
+  position: absolute;
+  bottom: -12px;
+  left: 15px;
+  background: white;
+  padding: 3px 8px;
+  border-radius: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  font-size: 0.8rem;
+  z-index: 10;
+}
+
+.time {
+  font-size: 0.7rem;
+  color: var(--wa-gray-text);
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.time i {
+  color: var(--wa-blue-tick);
+}
+
+/* Features Section */
+.featuresSection {
+  padding: 90px 10% 80px;
+  background-color: #f5f6f6;
+  min-height: 60vh;
+}
+
+.featuresTitle {
+  text-align: center;
+  font-size: 1.9rem;
+  margin-bottom: 40px;
+  color: var(--wa-dark);
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 24px;
+}
+
+.featureCard {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+}
+
+.featureIcon {
+  font-size: 1.6rem;
+  color: var(--wa-teal);
+  margin-bottom: 10px;
+}
+
+.featureCard h3 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: var(--wa-dark);
+}
+
+.featureCard p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--wa-gray-text);
+  line-height: 1.5;
+}
+
+/* Footer */
+.footer {
+  background-color: #0a1014;
+  color: #d1d7db;
+  padding: 14px 10%;
+  font-size: 0.85rem;
+}
+
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.footer a {
+  color: #25d366;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .heroContainer {
+    flex-direction: column;
+    text-align: center;
+    height: auto;
+    padding: 60px 8%;
+  }
+
+  .heroText p {
+    max-width: 100%;
+  }
+
+  .ctaGroup {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 15px;
+    height: auto;
+    flex-direction: row;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+    flex: 1;
+  }
+
+  .navButtons {
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .featuresSection {
+    padding: 60px 6%;
+  }
+
+  .chatMock {
+    max-width: 90%;
+  }
+}

@@ -1,0 +1,153 @@
+/* ── LIGHT THEME PROFILE MENU ── */
+.profileMenu {
+  position: absolute;
+  bottom: 20px;
+  left: 90px; /* Pops out to the right of the vertical strip */
+  background: #ffffff; /* Changed back to pure white */
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Softer shadow for light mode */
+  width: 200px;
+  overflow: hidden;
+  z-index: 100;
+  color: #111b21; /* Dark text */
+}
+
+.menuHeader {
+  padding: 15px;
+  border-bottom: 1px solid #e9edef; /* Light border */
+    background-color: #00a884;
+}
+
+.menuSignedIn {
+  font-size: 0.8rem;
+  color: black; /* Light gray text */
+}
+
+.menuUserName {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: white; /* Ah yes, the signature green username! */
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menuUserEmail {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85); /* Slightly faded white for contrast */
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adds '...' if the email is too long */
+}
+
+.menuItem {
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 0.95rem;
+  color: #3b4a54; /* Dark gray icons and text */
+}
+
+.menuItem:hover {
+  background: #f0f2f5; /* Light gray hover effect */
+}
+
+.menuItem.danger {
+  color: #ef4444; /* Bright red for logout */
+}
+
+.menuItem.danger:hover {
+  background: #fef2f2; /* Soft red background on hover */
+}
+
+.badge {
+  background: #00a884;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: auto; /* Pushes badge to the far right */
+}
+
+.navStrip {
+  width: 80px;
+  background-color: #202c33;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 0;
+  border-right: 1px solid #374045;
+  position: relative; /* needed so dropdown menu positions from here */
+  overflow: visible; /* don't clip the dropdown */
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.navLogo {
+  font-size: 2rem;
+  color: #00a884;
+  cursor: pointer;
+}
+
+.navProfile {
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aebac1;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.navProfile:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* ── Mobile — becomes a 56px horizontal top bar ── */
+/* ── Mobile — becomes a 56px horizontal top bar ── */
+@media (max-width: 768px) {
+  .navStrip {
+    width: 100%;
+    height: 56px;
+    flex-direction: row;
+    padding: 0 16px;
+    justify-content: space-between;
+    align-items: center;
+    border-right: none;
+    border-bottom: 1px solid #374045;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .navLogo img {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .navProfile {
+    width: 38px;
+    height: 38px;
+  }
+
+  .hideOnMobileChat {
+    display: none !important;
+  }
+
+  .profileMenu {
+    top: 65px;
+    bottom: auto;
+    left: auto;
+    right: 10px;
+  }
+}

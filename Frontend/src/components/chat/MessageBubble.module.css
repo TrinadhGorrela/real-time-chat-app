@@ -1,0 +1,181 @@
+.message {
+  max-width: 65%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+  color: #111b21;
+}
+
+.myMessage {
+  align-self: flex-end;
+  background: #d9fdd3;
+  border-top-right-radius: 0;
+}
+.otherMessage {
+  align-self: flex-start;
+  background: #ffffff;
+  border-top-left-radius: 0;
+}
+
+.messageContent {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.messageText {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.imageContent {
+  position: relative;
+  display: inline-block;
+}
+
+.messageImage {
+  max-width: 250px;
+  max-height: 300px;
+  border-radius: 8px;
+  cursor: pointer;
+  object-fit: cover;
+  display: block;
+}
+.messageImage:hover {
+  opacity: 0.9;
+}
+
+.fileContentOwn,
+.fileContentOther {
+  display: flex;
+  align-items: stretch;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  min-width: 200px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.fileContentOwn:hover,
+.fileContentOther:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.fileIcon {
+  background: #ffdddd;
+  padding: 8px 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  flex-shrink: 0;
+}
+
+.fileInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 10px 10px 0;
+  min-width: 0;
+}
+
+.fileName {
+  font-weight: 600;
+  font-size: 13px;
+  color: #111;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+.fileSize {
+  font-size: 10px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.downloadBtn {
+  width: 50px;
+  cursor: pointer;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.02);
+  text-decoration: none;
+  color: #54656f;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.downloadBtn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.msgMeta {
+  font-size: 0.7rem;
+  margin-top: 2px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  opacity: 0.7;
+}
+
+.msgTime {
+  font-size: 0.7rem;
+  color: #8696a0;
+  margin-right: 3px;
+}
+.tick {
+  font-size: 10px;
+}
+
+.deleteBtn {
+  cursor: pointer;
+  color: #8696a0;
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 10px;
+  margin-right: 5px;
+}
+.message:hover .deleteBtn {
+  opacity: 1;
+}
+.deleteBtn:hover {
+  color: #ef4444;
+}
+
+/* ── Mobile: wider bubbles, smaller images ── */
+@media (max-width: 600px) {
+  .message {
+    max-width: 82%;
+    font-size: 0.9rem;
+  }
+  .messageImage {
+    max-width: 200px;
+    max-height: 240px;
+  }
+  .fileContentOwn,
+  .fileContentOther {
+    min-width: 160px;
+  }
+  .fileName {
+    max-width: 110px;
+  }
+  /* FIX: Touch screens don't have hover, so make the trash icon visible! */
+  .deleteBtn {
+    opacity: 0.6; /* Semi-transparent so it isn't too distracting */
+  }
+}

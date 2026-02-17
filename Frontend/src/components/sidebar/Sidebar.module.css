@@ -1,0 +1,45 @@
+.sidebar {
+  width: 100%; /* FIX: Let the ChatApp wrapper control the actual width */
+  height: 100%; /* FIX: Let the ChatApp wrapper control the height */
+  background: white;
+  border-right: 1px solid #e9edef;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebarTop {
+  background: #fff;
+  border-bottom: 1px solid #e9edef;
+  flex-shrink: 0; /* Keeps the search bar from squishing when scrolling */
+}
+
+.heading {
+  padding: 15px 20px 5px;
+  font-size: 1.3rem;
+  color: #111b21;
+  font-weight: 700;
+  margin: 0;
+}
+
+.userList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+/* Custom Scrollbar for the user list */
+.userList::-webkit-scrollbar {
+  width: 6px;
+}
+.userList::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 3px;
+}
+
+.emptyState {
+  padding: 40px 20px;
+  text-align: center;
+  color: #8696a0;
+  font-size: 0.95rem;
+}
