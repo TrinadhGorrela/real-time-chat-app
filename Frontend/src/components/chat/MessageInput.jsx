@@ -6,13 +6,10 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
   const [text, setText] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
-
-  // NEW STATES FOR WHATSAPP-STYLE PREVIEW
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [caption, setCaption] = useState("");
 
-  // Cleanup the object URL to prevent memory leaks when preview closes
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -38,27 +35,23 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
     onTyping();
   };
 
-  // STEP 1: Just hold the file in state, DO NOT upload yet!
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setSelectedFile(file);
 
-    // If it's an image, create a local preview URL
     if (file.type.startsWith("image/")) {
       setPreviewUrl(URL.createObjectURL(file));
     } else {
-      setPreviewUrl(null); // It's a document
+      setPreviewUrl(null);
     }
 
-    // Reset input so they can select the exact same file again if they cancel
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  // STEP 2: The user clicked "Send" from inside the preview modal
   const handleConfirmUpload = async () => {
     if (!selectedFile) return;
 
@@ -74,7 +67,6 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
         messageType = "DOCUMENT";
       }
 
-      // Send the message WITH the caption!
       onSendMessage(caption.trim(), {
         messageType,
         fileUrl: fileData.fileUrl,
@@ -82,7 +74,6 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
         fileSize: fileData.fileSize || selectedFile.size,
       });
 
-      // Close the preview
       cancelPreview();
     } catch (err) {
       console.error("File upload failed:", err);
@@ -101,7 +92,6 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
 
   return (
     <>
-      {/* 🛑 THE WHATSAPP STYLE PREVIEW OVERLAY 🛑 */}
       {selectedFile && (
         <div className={styles.previewOverlay}>
           <div className={styles.previewHeader}>
@@ -161,7 +151,6 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
         </div>
       )}
 
-      {/* NORMAL CHAT INPUT */}
       <div className={styles.inputArea}>
         <input
           type="file"

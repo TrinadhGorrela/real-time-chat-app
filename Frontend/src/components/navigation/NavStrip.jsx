@@ -13,7 +13,6 @@ const NavStrip = ({ onAddFriend, onShowRequests, pendingCount, mobileView }) => 
   const menuRef = useRef(null);
   const btnRef = useRef(null);
 
-  // Close menu when clicking anywhere outside it
   useEffect(() => {
     if (!showMenu) return;
     const handleClick = (e) => {
@@ -53,7 +52,6 @@ const NavStrip = ({ onAddFriend, onShowRequests, pendingCount, mobileView }) => 
   };
 
   return (
-    // 2. ADDED THE DYNAMIC CLASS HERE 👇
     <nav className={`${styles.navStrip} ${mobileView === 'chat' ? styles.hideOnMobileChat : ''}`}>
       <div className={styles.navLogo} title="ChatApp">
         <img
@@ -63,7 +61,6 @@ const NavStrip = ({ onAddFriend, onShowRequests, pendingCount, mobileView }) => 
         />
       </div>
 
-      {/* Profile button at bottom */}
       <div
         ref={btnRef}
         className={styles.navProfile}
@@ -73,7 +70,6 @@ const NavStrip = ({ onAddFriend, onShowRequests, pendingCount, mobileView }) => 
         <i className="fa-solid fa-user"></i>
       </div>
 
-      {/* Profile dropdown menu */}
       {showMenu && (
         <div className={styles.profileMenu} ref={menuRef}>
           <div className={styles.menuHeader}>
@@ -105,7 +101,6 @@ const NavStrip = ({ onAddFriend, onShowRequests, pendingCount, mobileView }) => 
         </div>
       )}
 
-      {/* RENDER MODAL HERE (Outside the menu) */}
       {showLogoutModal && (
         <LogoutModal
           onConfirm={confirmLogout}

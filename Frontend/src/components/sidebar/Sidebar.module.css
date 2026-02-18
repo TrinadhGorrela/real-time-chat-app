@@ -1,6 +1,6 @@
 .sidebar {
-  width: 100%; /* FIX: Let the ChatApp wrapper control the actual width */
-  height: 100%; /* FIX: Let the ChatApp wrapper control the height */
+  width: 100%; 
+  height: 100%; 
   background: white;
   border-right: 1px solid #e9edef;
   display: flex;
@@ -11,7 +11,7 @@
 .sidebarTop {
   background: #fff;
   border-bottom: 1px solid #e9edef;
-  flex-shrink: 0; /* Keeps the search bar from squishing when scrolling */
+  flex-shrink: 0; 
 }
 
 .heading {
@@ -28,7 +28,6 @@
   padding: 5px;
 }
 
-/* Custom Scrollbar for the user list */
 .userList::-webkit-scrollbar {
   width: 6px;
 }

@@ -3,14 +3,14 @@
   background-color: #efeae2;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* prevents the area itself from scrolling */
+  overflow: hidden;
   min-width: 0;
 }
 
 .messages {
   flex: 1;
   padding: 20px 30px;
-  overflow-y: auto; /* only the message list scrolls */
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 5px;

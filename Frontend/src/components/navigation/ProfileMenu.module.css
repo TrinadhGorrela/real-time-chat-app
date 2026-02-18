@@ -50,12 +50,12 @@
   text-align: center;
   display: inline-block;
 }
-/* ── Mobile Positioning ── */
+
 @media (max-width: 768px) {
   .profileMenu {
-    top: 60px;       /* Pop DOWN from the horizontal NavStrip */
-    bottom: auto;    /* Cancel the desktop bottom position */
-    left: auto;      /* Cancel the desktop left position */
-    right: 10px;     /* Pin it cleanly to the right edge */
+    top: 60px;       
+    bottom: auto;    
+    left: auto;      
+    right: 10px;     
   }
 }

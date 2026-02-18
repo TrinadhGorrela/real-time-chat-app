@@ -10,7 +10,7 @@
    ========================================= */
 .appContainer {
   display: flex;
-  flex-direction: row; /* Ensure items sit side-by-side */
+  flex-direction: row;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
@@ -20,18 +20,18 @@
 .sidebarWrapper {
   display: flex;
   flex-shrink: 0;
-  width: 350px; /* FIX: Give the sidebar a strict width on desktop */
+  width: 350px; 
   height: 100%;
-  border-right: 1px solid #e9edef; /* Optional: adds a nice separator line */
+  border-right: 1px solid #e9edef; 
   background: #ffffff;
 }
 
 .chatWrapper {
   display: flex;
-  flex: 1; /* FIX: Chat takes up all remaining space */
+  flex: 1; 
   min-width: 0;
   height: 100%;
-  background: #efeae2; /* Optional: standard WhatsApp web chat background */
+  background: #efeae2; 
 }
 
 /* =========================================
@@ -51,10 +51,9 @@
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 
-  /* 🛑 FIX: Sidebar sits BELOW the 56px NavStrip */
   .sidebarWrapper {
     top: 56px; 
-    height: calc(100% - 56px); /* Prevents it from scrolling off the bottom */
+    height: calc(100% - 56px);
     z-index: 1;
     transform: translateX(0);
   }
@@ -63,7 +62,6 @@
     transform: translateX(-100%);
   }
 
-  /* Chat takes the FULL screen because NavStrip hides when chat is open */
   .chatWrapper {
     top: 0;
     height: 100%;

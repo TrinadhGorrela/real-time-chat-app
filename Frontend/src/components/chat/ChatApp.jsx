@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useWebSocket } from "../../context/WebSocketContext";
 import NavStrip from "../navigation/NavStrip";
@@ -24,10 +24,14 @@ const ChatApp = () => {
   const [toast, setToast] = useState({ show: false, message: "" });
   const [requests, setRequests] = useState([]);
 
-  // "sidebar" | "chat" — which panel shows on mobile
   const [mobileView, setMobileView] = useState("sidebar");
 
-  // Mark online on mount; offline on unmount / tab close
+  const activeContactRef = useRef(activeContact);
+
+  useEffect(() => {
+    activeContactRef.current = activeContact;
+  }, [activeContact]);
+
   useEffect(() => {
     authService.setOnline().catch(() => {});
 
@@ -62,25 +66,34 @@ const ChatApp = () => {
       `/topic/private/${user.email.toLowerCase()}`,
       (frame) => {
         const msg = JSON.parse(frame.body);
+
+       
+        if (msg.type === "READ_RECEIPT") {
+          const reader = msg.reader?.toLowerCase();
+          
+          if (activeContactRef.current?.email?.toLowerCase() === reader) {           
+            window.dispatchEvent(new Event("messages-read"));
+          } 
+          return; 
+        }
+
         const sender = msg.sender?.toLowerCase();
         const myEmail = user.email.toLowerCase();
 
         if (!sender || sender === myEmail) return;
 
-        // Only badge/toast when this contact isn't the active chat
-        setActiveContact((current) => {
-          if (current?.email?.toLowerCase() !== sender) {
-            setUnreadCounts((prev) => ({
-              ...prev,
-              [sender]: (prev[sender] || 0) + 1,
-            }));
-            showToast(`${msg.sender}: ${msg.content || "📎 File"}`);
-            try {
-              new Audio("/audio/notification.mp3").play().catch(() => {});
-            } catch (_) {}
-          }
-          return current;
-        });
+        const currentActiveEmail = activeContactRef.current?.email?.toLowerCase();
+
+        if (currentActiveEmail !== sender) {
+          setUnreadCounts((prev) => ({
+            ...prev,
+            [sender]: (prev[sender] || 0) + 1,
+          }));
+          showToast(`${msg.sender}: ${msg.content || "📎 File"}`);
+          try {
+            new Audio("/audio/notification.mp3").play().catch(() => {});
+          } catch (_) {}
+        }
       },
     );
 
@@ -102,10 +115,9 @@ const ChatApp = () => {
   const handleSelectContact = (contact) => {
     setActiveContact(contact);
     setUnreadCounts((prev) => ({ ...prev, [contact.email.toLowerCase()]: 0 }));
-    setMobileView("chat"); // switch to chat panel on mobile
+    setMobileView("chat");
   };
 
-  // Back button → return to sidebar on mobile
   const handleBackToSidebar = () => {
     setMobileView("sidebar");
     setActiveContact(null);
@@ -119,7 +131,7 @@ const ChatApp = () => {
     try {
       await friendService.deleteFriend(friendEmail);
       setActiveContact(null);
-      setMobileView("sidebar"); // return to sidebar after delete
+      setMobileView("sidebar");
       loadContacts();
       showToast("Contact deleted successfully");
     } catch {
@@ -144,7 +156,6 @@ const ChatApp = () => {
         mobileView={mobileView}
       />
 
-      {/* Sidebar panel — slides off-screen left when chat is open on mobile */}
       <div
         className={`${styles.sidebarWrapper} ${
           mobileView === "chat" ? styles.sidebarHidden : ""
@@ -158,7 +169,6 @@ const ChatApp = () => {
         />
       </div>
 
-      {/* Chat panel — slides in from right when contact selected on mobile */}
       <div
         className={`${styles.chatWrapper} ${
           mobileView === "sidebar" ? styles.chatHidden : ""

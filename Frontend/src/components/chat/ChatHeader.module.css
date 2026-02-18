@@ -7,7 +7,6 @@
   justify-content: space-between;
 }
 
-/* Back button — hidden on desktop, shown on mobile */
 .backBtn {
   display: none;
   background: none;
@@ -142,7 +141,7 @@
 }
 
 .backBtn {
-  display: block; /* Changed from none to block so it shows on desktop! */
+  display: block;
   background: none;
   border: none;
   color: #54656f; 
@@ -154,7 +153,7 @@
 }
 
 .backBtn:hover {
-  color: #00a884; /* Lights up green when tapped/hovered */
+  color: #00a884;
 }
 
 /* ── Mobile ─────────────────────────────────── */
@@ -164,7 +163,7 @@
   }
 
   .backBtn {
-    display: block; /* show ← arrow on mobile */
+    display: block;
   }
 
   .userName {

@@ -14,7 +14,6 @@
   transition: background-color 0.2s;
 }
 
-/* Lights up slightly when clicking into the search */
 .searchWrapper:focus-within {
   background-color: #e9edef;
   box-shadow: inset 0 0 0 1px #d1d7db;

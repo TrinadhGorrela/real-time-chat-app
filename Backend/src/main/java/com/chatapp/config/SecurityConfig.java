@@ -30,8 +30,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Public HTML pages (not needed for React, but keep for compatibility)
-                        .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/chat.html",
-                                "/admin.html")
+                        .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/chat.html")
                         .permitAll()
 
                         // Static resources
@@ -43,9 +42,6 @@ public class SecurityConfig {
                         // WebSocket
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/app/**").permitAll()
-
-                        // Admin endpoints
-                        .requestMatchers("/admin/**").permitAll()
 
                         // File serving
                         .requestMatchers("/files/**").permitAll()

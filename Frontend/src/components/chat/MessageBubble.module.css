@@ -174,8 +174,7 @@
   .fileName {
     max-width: 110px;
   }
-  /* FIX: Touch screens don't have hover, so make the trash icon visible! */
   .deleteBtn {
-    opacity: 0.6; /* Semi-transparent so it isn't too distracting */
+    opacity: 0.6;
   }
 }

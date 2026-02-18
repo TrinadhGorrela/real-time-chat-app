@@ -1,32 +1,31 @@
-/* ── LIGHT THEME PROFILE MENU ── */
 .profileMenu {
   position: absolute;
   bottom: 20px;
-  left: 90px; /* Pops out to the right of the vertical strip */
-  background: #ffffff; /* Changed back to pure white */
+  left: 90px; 
+  background: #ffffff; 
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Softer shadow for light mode */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); 
   width: 200px;
   overflow: hidden;
   z-index: 100;
-  color: #111b21; /* Dark text */
+  color: #111b21; 
 }
 
 .menuHeader {
   padding: 15px;
-  border-bottom: 1px solid #e9edef; /* Light border */
+  border-bottom: 1px solid #e9edef; 
     background-color: #00a884;
 }
 
 .menuSignedIn {
   font-size: 0.8rem;
-  color: black; /* Light gray text */
+  color: black; 
 }
 
 .menuUserName {
   font-size: 1.05rem;
   font-weight: 700;
-  color: white; /* Ah yes, the signature green username! */
+  color: white;
   margin-top: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -35,11 +34,11 @@
 
 .menuUserEmail {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.85); /* Slightly faded white for contrast */
+  color: rgba(255, 255, 255, 0.85);
   margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Adds '...' if the email is too long */
+  text-overflow: ellipsis;
 }
 
 .menuItem {
@@ -50,19 +49,19 @@
   cursor: pointer;
   transition: background 0.2s;
   font-size: 0.95rem;
-  color: #3b4a54; /* Dark gray icons and text */
+  color: #3b4a54; 
 }
 
 .menuItem:hover {
-  background: #f0f2f5; /* Light gray hover effect */
+  background: #f0f2f5;
 }
 
 .menuItem.danger {
-  color: #ef4444; /* Bright red for logout */
+  color: #ef4444; 
 }
 
 .menuItem.danger:hover {
-  background: #fef2f2; /* Soft red background on hover */
+  background: #fef2f2; 
 }
 
 .badge {
@@ -72,7 +71,7 @@
   font-weight: bold;
   padding: 2px 6px;
   border-radius: 10px;
-  margin-left: auto; /* Pushes badge to the far right */
+  margin-left: auto; 
 }
 
 .navStrip {
@@ -84,8 +83,8 @@
   justify-content: space-between;
   padding: 30px 0;
   border-right: 1px solid #374045;
-  position: relative; /* needed so dropdown menu positions from here */
-  overflow: visible; /* don't clip the dropdown */
+  position: relative; 
+  overflow: visible; 
   z-index: 20;
   flex-shrink: 0;
 }
@@ -114,8 +113,6 @@
   color: white;
 }
 
-/* ── Mobile — becomes a 56px horizontal top bar ── */
-/* ── Mobile — becomes a 56px horizontal top bar ── */
 @media (max-width: 768px) {
   .navStrip {
     width: 100%;

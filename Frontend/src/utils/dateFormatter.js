@@ -1,4 +1,3 @@
-// Format message timestamp → "10:35 AM"
 export const formatMessageTime = (timestamp) => {
   if (!timestamp) return '';
   const date = new Date(timestamp);
@@ -9,7 +8,6 @@ export const formatMessageTime = (timestamp) => {
   });
 };
 
-// Format "last seen" → "2h ago", "yesterday at 3:45 PM", etc.
 export const formatTime2 = (timestamp) => {
   if (!timestamp) return '';
   const date = new Date(timestamp);
@@ -38,7 +36,6 @@ export const formatTime2 = (timestamp) => {
   return `${dateStr} at ${time}`;
 };
 
-// Format date header → "Today", "Yesterday", "Jan 15, 2025"
 export const formatDateHeader = (timestamp) => {
   const msgDate = new Date(timestamp);
   const today = new Date();
@@ -55,7 +52,6 @@ export const formatDateHeader = (timestamp) => {
   });
 };
 
-// Check if two timestamps are on the same day
 export const isSameDay = (ts1, ts2) => {
   const d1 = new Date(ts1);
   const d2 = new Date(ts2);

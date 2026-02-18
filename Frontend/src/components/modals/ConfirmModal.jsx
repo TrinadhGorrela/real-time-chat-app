@@ -18,7 +18,6 @@ const ConfirmModal = ({
         <h3>{title}</h3>
         <p>{message}</p>
 
-        {/* FIX: Changed modalActions to buttonGroup right here */}
         <div className={styles.buttonGroup}>
           <button
             className={isDanger ? styles.btnDanger : styles.btnPrimary}

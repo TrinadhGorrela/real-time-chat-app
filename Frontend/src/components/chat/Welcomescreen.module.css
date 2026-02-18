@@ -12,10 +12,10 @@
 }
 
 .logo {
-  width: 120px; /* Or whatever size looks best for your logo */
+  width: 120px;
   height: auto;
   margin-bottom: 30px;
-  opacity: 0.6; /* Makes it look slightly faded/subtle like a background image */
+  opacity: 0.6;
 }
 
 .welcomeScreen h2 {

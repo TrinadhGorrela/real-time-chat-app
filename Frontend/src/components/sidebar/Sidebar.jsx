@@ -23,7 +23,7 @@ const Sidebar = ({
       </div>
 
       <div className={styles.userList}>
-        {/* UX Upgrade: Show a message if the search finds nothing */}
+       
         {filtered.length > 0 ? (
           filtered.map((contact) => (
             <UserItem

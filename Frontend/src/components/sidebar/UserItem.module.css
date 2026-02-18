@@ -57,7 +57,6 @@
   flex-shrink: 0;
 }
 
-/* ── Mobile: bigger tap targets ── */
 @media (max-width: 600px) {
   .userItem   { padding: 14px 12px; }
   .userAvatar { width: 42px; height: 42px; }

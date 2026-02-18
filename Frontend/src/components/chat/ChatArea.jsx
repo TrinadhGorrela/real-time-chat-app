@@ -6,7 +6,7 @@ import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 import WelcomeScreen from "./WelcomeScreen";
 import DateHeader from "./DateHeader";
-import ConfirmModal from "../modals/ConfirmModal"; // Restored custom modal
+import ConfirmModal from "../modals/ConfirmModal";
 import chatService from "../../services/chatService";
 import authService from "../../services/authService";
 import styles from "./ChatArea.module.css";
@@ -17,8 +17,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
   const [messages, setMessages] = useState([]);
   const [typing, setTyping] = useState(false);
   const [status, setStatus] = useState({ isOnline: false, lastSeen: null });
-
-  // Restored Modal States
   const [showDeleteFriendModal, setShowDeleteFriendModal] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState(null);
 
@@ -26,14 +24,13 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
   const typingTimeoutRef = useRef(null);
 
   // ─────────────────────────────────────────────────────────────
-  // THE REF FIX: Keeps WebSockets perfectly in sync without re-subscribing
+  // WebSockets perfectly in sync without re-subscribing
   // ─────────────────────────────────────────────────────────────
   const activeContactRef = useRef(activeContact);
   useEffect(() => {
     activeContactRef.current = activeContact;
   }, [activeContact]);
 
-  // Load history + status when contact changes
   useEffect(() => {
     if (!activeContact || !user) return;
 
@@ -63,7 +60,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
     }
   }, [activeContact?.email]);
 
-  // Single WebSocket Subscription Block
   useEffect(() => {
     if (!connected || !user) return;
 
@@ -72,7 +68,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
     const messageSub = subscribe(`/topic/private/${myEmail}`, (frame) => {
       const msg = JSON.parse(frame.body);
 
-      // ANTI-LOOP FIX
       if (!msg.content && msg.status === "READ") return;
 
       const sender = msg.sender?.trim().toLowerCase();
@@ -126,17 +121,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
       }
     });
 
-    const receiptSub = subscribe("/user/queue/read-receipts", (frame) => {
-      const msg = JSON.parse(frame.body);
-      if (msg.status === "READ") {
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.sender?.toLowerCase() === myEmail ? { ...m, status: "READ" } : m,
-          ),
-        );
-      }
-    });
-
     const statusSub = subscribe("/topic/status", (frame) => {
       const s = JSON.parse(frame.body);
       if (
@@ -158,6 +142,21 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const handleReadReceipt = () => {
+      setMessages((prevMessages) =>
+        prevMessages.map((m) =>
+          m.sender?.toLowerCase() === user?.email?.toLowerCase()
+            ? { ...m, status: "READ" }
+            : m,
+        ),
+      );
+    };
+
+    window.addEventListener("messages-read", handleReadReceipt);
+    return () => window.removeEventListener("messages-read", handleReadReceipt);
+  }, [user?.email]);
 
   const sendMessage = (content, fileData = null) => {
     if (!activeContact || !user || !connected) return;
@@ -196,7 +195,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
     }, 3000);
   };
 
-  // Restored Custom Deletion Logic
   const handleDeleteMessageClick = (messageId) => {
     setMessageToDelete(messageId);
   };
@@ -269,11 +267,10 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
         </>
       )}
 
-      {/* MODALS SECTION */}
       {showDeleteFriendModal && (
         <ConfirmModal
-          title="Delete Contact?"
-          message={`Are you sure you want to delete ${activeContact.name}? This will remove your entire chat history.`}
+          title="Delete Contact"
+          message={`Are you sure you want to delete ${activeContact.name} ? This will remove your entire chat history.`}
           onConfirm={confirmDeleteFriend}
           onCancel={() => setShowDeleteFriendModal(false)}
         />
@@ -281,8 +278,8 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
 
       {messageToDelete && (
         <ConfirmModal
-          title="Delete Message?"
-          message="This message will be removed for you. This action cannot be undone."
+          title="Delete Message"
+          message="This message will be delete from you. This action cannot be undone."
           onConfirm={confirmDeleteMessage}
           onCancel={() => setMessageToDelete(null)}
         />

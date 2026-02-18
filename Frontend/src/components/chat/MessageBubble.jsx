@@ -33,7 +33,6 @@ const MessageBubble = ({ message, isOwn, onDelete }) => {
       (message.messageType === "DOCUMENT" || message.messageType === "FILE") &&
       message.fileName
     ) {
-      // Both Sender and Receiver get a clickable card that opens the file in a new tab
       return (
         <div
           className={isOwn ? styles.fileContentOwn : styles.fileContentOther}
@@ -52,8 +51,6 @@ const MessageBubble = ({ message, isOwn, onDelete }) => {
               {formatFileSize(message.fileSize || 0)}
             </div>
           </div>
-
-          {/* Download icon just for visual familiarity (WhatsApp Web does this) */}
           <div className={styles.downloadBtn}>
              <i className="fa-solid fa-download"></i>
           </div>

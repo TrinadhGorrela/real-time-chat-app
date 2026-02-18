@@ -10,7 +10,7 @@ const Features = () => {
 
   return (
     <section className={styles.featuresSection} id="features">
-      <h2 className={styles.featuresTitle}>Why you will love Chat Application</h2>
+      <h2 className={styles.featuresTitle}>Chat Application Features</h2>
       <div className={styles.featuresGrid}>
         {features.map((f, i) => (
           <div key={i} className={styles.featureCard}>

@@ -40,8 +40,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;              /* This creates the horizontal space */
-  margin-top: 25px;       /* This pushes buttons away from the "undone" text */
+  gap: 16px;              
+  margin-top: 25px;      
   width: 100%;
 }
 
@@ -76,9 +76,9 @@
   cursor: not-allowed;
 }
 .btnSecondary {
-  background: #f0f2f5;      /* Light gray background */
-  border: 1px solid #d1d7db; /* Subtle border for definition */
-  color: #54656f;            /* Darker text for readability */
+  background: #f0f2f5;     
+  border: 1px solid #d1d7db; 
+  color: #54656f;            
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -150,21 +150,20 @@
   border-radius: 4px;
   cursor: pointer;
 }
-/* This covers the entire screen */
+
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+  background-color: rgba(0, 0, 0, 0.5); 
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center;     /* Center vertically */
-  z-index: 9999;           /* Ensure it sits on top of everything */
+  justify-content: center;
+  align-items: center; 
+  z-index: 62;
 }
 
-/* This is the actual white box */
 .modalContent {
   background: white;
   padding: 24px;
@@ -172,7 +171,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 400px;
-  animation: fadeIn 0.2s ease-out; /* Optional: smooth pop-in */
+  animation: fadeIn 0.2s ease-out; 
 }
 
 @keyframes fadeIn {

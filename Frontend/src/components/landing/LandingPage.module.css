@@ -18,7 +18,6 @@
   min-height: 100vh;
 }
 
-/* Navbar */
 .navbar {
   background-color: var(--wa-teal);
   padding: 10px 5%;
@@ -64,7 +63,6 @@
   align-items: center;
 }
 
-/* Buttons */
 .btn {
   padding: 12px 28px;
   border-radius: 50px;
@@ -97,7 +95,6 @@
   font-size: 1.05rem;
 }
 
-/* Hero Section */
 .heroContainer {
   display: flex;
   align-items: center;
@@ -134,7 +131,6 @@
   align-items: center;
 }
 
-/* Hero Visuals */
 .heroVisuals {
   position: relative;
   width: 100%;
@@ -240,7 +236,6 @@
   color: var(--wa-blue-tick);
 }
 
-/* Features Section */
 .featuresSection {
   padding: 90px 10% 80px;
   background-color: #f5f6f6;
@@ -292,7 +287,6 @@
   line-height: 1.5;
 }
 
-/* Footer */
 .footer {
   background-color: #0a1014;
   color: #d1d7db;
@@ -318,7 +312,6 @@
   text-decoration: underline;
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .heroContainer {
     flex-direction: column;

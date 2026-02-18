@@ -1,4 +1,3 @@
-// Format bytes → "1.5 MB", "340 KB"
 export const formatFileSize = (bytes) => {
   if (!bytes || bytes === 0) return '0 Bytes';
   const k = 1024;
@@ -7,7 +6,6 @@ export const formatFileSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-// Get Font Awesome icon class for file type
 export const getFileIcon = (fileName) => {
   if (!fileName) return 'fa-file';
   const ext = fileName.split('.').pop().toLowerCase();
@@ -24,7 +22,6 @@ export const getFileIcon = (fileName) => {
   return icons[ext] || 'fa-file';
 };
 
-// Get color for file icon
 export const getFileIconColor = (fileName) => {
   if (!fileName) return '#666';
   const ext = fileName.split('.').pop().toLowerCase();
@@ -41,7 +38,6 @@ export const getFileIconColor = (fileName) => {
   return colors[ext] || '#666';
 };
 
-// Determine message type from a File object
 export const getMessageType = (file) => {
   const ext = file.name.split('.').pop().toLowerCase();
   if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return 'IMAGE';
@@ -49,7 +45,6 @@ export const getMessageType = (file) => {
   return 'FILE';
 };
 
-// Open a file URL in a new window or trigger download
 export const handleFileOpen = (fileUrl, fileName) => {
   const ext = fileName.split('.').pop().toLowerCase();
   if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'].includes(ext)) {
@@ -79,7 +74,6 @@ export const handleFileOpen = (fileUrl, fileName) => {
   }
 };
 
-// Escape HTML to prevent XSS in message content
 export const escapeHtml = (text) => {
   const div = document.createElement('div');
   div.textContent = text;
