@@ -2,36 +2,36 @@
 
 A full-stack real-time chat application built with React and Spring Boot, featuring WebSocket messaging, JWT authentication, friend management, and file sharing.
 
-## 📋 Table of Contents
+## Table of Contents
 |                Section                  |               Description               |
 |-----------------------------------------|-----------------------------------------|
-| [✨ Features](#-features)               | Real-time messaging, Auth, File Sharing |
-| [🛠 Tech Stack](#-tech-stack)            | React, Spring Boot, WebSocket, MySQL    |
-| [🏗 Architecture](#-architecture)        | System design & Data flow diagrams      |
-| [📂 Structure](#-project-structure)     | Codebase organization & modules         |
-| [🚀 Getting Started](#-getting-started) | Setup guide for Backend & Frontend      |
-| [📡 API Docs](#-api-documentation)      | REST Endpoints & Usage                  |
-| [🔌 WebSocket](#-websocket-events)      | Real-time event payloads & topics       |
-| [🖼 Screenshots](#-screenshots)          | App preview on Desktop & Mobile         |
-| [🤝 Contributing](#-contributing)       | Guidelines for contributing             |
+| [Features](#-features)                  | Real-time messaging, Auth, File Sharing |
+| [Tech Stack](#-tech-stack)              | React, Spring Boot, WebSocket, MySQL    |
+| [Architecture](#-architecture)          | System design & Data flow diagrams      |
+| [Structure](#-project-structure)        | Codebase organization & modules         |
+| [Getting Started](#-getting-started)    | Setup guide for Backend & Frontend      |
+| [API Docs](#-api-documentation)         | REST Endpoints & Usage                  |
+| [WebSocket](#-websocket-events)         | Real-time event payloads & topics       |
+| [Screenshots](#-screenshots)            | App preview on Desktop & Mobile         |
+| [Contributing](#-contributing)          | Guidelines for contributing             |
 
-## ✨ Features
+## Features
 
 ### Core Functionality
-- 🔐 **JWT Authentication** - Secure login/registration with token-based auth
-- 💬 **Real-Time Messaging** - Instant message delivery via WebSocket (STOMP)
-- 👥 **Friend Management** - Send/accept/decline friend requests
-- 📎 **File Sharing** - Upload and share images, documents, and files
-- ✅ **Read Receipts** - Message status tracking (sent/delivered/read)
-- ⌨️ **Typing Indicators** - See when contacts are typing
-- 🟢 **Online Status** - Real-time presence tracking with last seen timestamps
-- 📱 **Responsive Design** - WhatsApp-style mobile UI with panel switching
-- 🗑️ **Message Management** - Delete messages and conversations
-- 👤 **User Profiles** - Avatars and profile management
-- 🔔 **Notifications** - Audio alerts and unread badges
-- 🔍 **Search** - Find contacts quickly
+- **JWT Authentication** - Secure login/registration with token-based auth
+- **Real-Time Messaging** - Instant message delivery via WebSocket (STOMP)
+- **Friend Management** - Send/accept/decline friend requests
+- **File Sharing** - Upload and share images, documents, and files
+- **Read Receipts** - Message status tracking (sent/delivered/read)
+- **Typing Indicators** - See when contacts are typing
+- **Online Status** - Real-time presence tracking with last seen timestamps
+- **Responsive Design** - WhatsApp-style mobile UI with panel switching
+- **Message Management** - Delete messages and conversations
+- **User Profiles** - Avatars and profile management
+- **Notifications** - Audio alerts and unread badges
+- **Search** - Find contacts quickly
 
-## 🛠 Tech Stack
+## Tech Stack
 
 ### Frontend
 |     Technology      |             Purpose                 |
@@ -55,7 +55,7 @@ A full-stack real-time chat application built with React and Spring Boot, featur
 | **Lombok**          | Boilerplate reduction              |
 | **Jackson**         | JSON serialization                 |
 
-## 🏗 Architecture
+## Architecture
 
 ### System Architecture
 ```mermaid
@@ -141,7 +141,7 @@ src/main/java/com/chatapp/
     └── FriendRequestDTO.java
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 chatapp/
@@ -176,7 +176,7 @@ chatapp/
     └── ChatAppApplication.java      # Spring Boot main class
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+ and npm
@@ -235,7 +235,7 @@ chatapp/
    ```
    Frontend runs on `http://localhost:3000`
 
-## 📡 API Documentation
+## API Documentation
 
 ### Authentication Endpoints
 | Method | Endpoint                        | Description         | Auth Required |
@@ -268,7 +268,7 @@ chatapp/
 | POST   | `/files/upload`                | Upload file   | Yes           |
 | GET    | `/files/download/{filename}`   | Download file | Yes           |
 
-## 🔌 WebSocket Events
+## WebSocket Events
 
 ### Client → Server
 | Destination             |          Payload               | Description          |
@@ -285,13 +285,19 @@ chatapp/
 | `/topic/status`               | `{email, isOnline, lastSeen}` | Online status               |
 | `/user/queue/read-receipts`   | `{id, status}`                | Read receipt acknowledgment |
 
-## 🖼 Screenshots
+## Screenshots
 
-### Desktop View
-![Desktop View](/Screenshots/1.png)
+### Login & Register
+<p float="left">
+  <img src="/Screenshots/Login Page.png" width="45%" />
+  <img src="/Screenshots/Register Page.png" width="45%" /> 
+</p>
 
-### Mobile View
-![Mobile View](/Screenshots/2.png)
+### Chat Interface
+<p float="left">
+  <img src="/Screenshots/Home Page.png" width="45%" />
+  <img src="/Screenshots/Chat Area.png" width="45%" />
+</p>
 
 ##  Contributing
 1. Fork the repository
@@ -300,5 +306,10 @@ chatapp/
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-##  License
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Author
+
+**Siva Satya Trinadh Gorrela**
+- **Email:** [trinadh.gorrela2004@gmail.com](mailto:trinadh.gorrela2004@gmail.com)
+- **LinkedIn:** [Siva Satya Trinadh Gorrela](https://www.linkedin.com/in/trinadhgorrela/)
+- **GitHub:** [@TrinadhGorrela](https://github.com/TrinadhGorrela)
+
