@@ -27,7 +27,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("http://localhost:3000", "http://localhost:8081", "*")
+                .setAllowedOriginPatterns("http://localhost:3000", "http://localhost:8081", "https://localhost:3000",
+                        "https://localhost:8081", "http://localhost:5173", "https://localhost:5173", "*")
                 .setHandshakeHandler(new DefaultHandshakeHandler())
                 .withSockJS();
     }
@@ -47,10 +48,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         @Autowired
         private UserRepository userRepo;
 
-        // Map to hold sessionId -> email
         private final Map<String, String> sessionUserMap = new ConcurrentHashMap<>();
 
-        // Listen for connections to map the session ID to the user's email
         @EventListener
         public void handleWebSocketConnectListener(SessionConnectEvent event) {
             StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
@@ -63,6 +62,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 if (headers.containsKey("email")) {
                     String email = headers.get("email").get(0);
                     sessionUserMap.put(sessionId, email);
+
+                    User user = userRepo.findByEmail(email);
+                    if (user != null) {
+                        user.setOnline(true);
+                        userRepo.save(user);
+                    }
+
+                    template.convertAndSend("/topic/status", Map.of(
+                            "email", email,
+                            "isOnline", true));
                 }
             }
         }

@@ -1,4 +1,4 @@
-import styles from './LandingPage.module.css';
+import styles from "./LandingPage.module.css";
 
 const Footer = () => {
   return (
@@ -6,7 +6,9 @@ const Footer = () => {
       <div className={styles.footerContent}>
         <span>© 2026 Chat Application</span>
         <span>Trinadh G · B.Tech ECE</span>
-        <a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/" target="_blank" rel="noreferrer">
+          GitHub
+        </a>
       </div>
     </footer>
   );

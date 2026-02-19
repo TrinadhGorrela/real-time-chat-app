@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Public HTML pages (not needed for React, but keep for compatibility)
+                        // Public HTML pages
                         .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/chat.html")
                         .permitAll()
 
@@ -67,13 +67,13 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // ✅ IMPORTANT: Allow React dev server origin
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "http://localhost:8081", "*"));
-
+        configuration.setAllowedOriginPatterns(
+                Arrays.asList("http://localhost:3000", "http://localhost:8081", "https://localhost:3000",
+                        "https://localhost:8081", "http://localhost:5173", "https://localhost:5173", "*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L); // Cache preflight for 1 hour
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

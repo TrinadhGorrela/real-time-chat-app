@@ -23,7 +23,6 @@ const Sidebar = ({
       </div>
 
       <div className={styles.userList}>
-       
         {filtered.length > 0 ? (
           filtered.map((contact) => (
             <UserItem

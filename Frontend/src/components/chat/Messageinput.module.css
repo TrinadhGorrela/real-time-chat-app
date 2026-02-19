@@ -133,7 +133,6 @@
   cursor: not-allowed;
 }
 
-/* ── Mobile adjustments for Preview ── */
 @media (max-width: 600px) {
   .previewFooter {
     padding: 10px;
@@ -229,10 +228,6 @@
   font-size: 0.85rem;
   box-shadow: 0 4px 12px rgba(0, 168, 132, 0.4);
 }
-
-/* =========================================
-   RESPONSIVE DESIGN (Tablet & Mobile)
-   ========================================= */
 
 /* ── Tablet ── */
 @media (max-width: 768px) {

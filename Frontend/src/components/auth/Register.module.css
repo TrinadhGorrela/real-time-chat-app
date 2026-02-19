@@ -86,22 +86,18 @@
   text-align: left;
 }
 
-/* Left icon */
 .inputGroup i {
   position: absolute;
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
   color: #8696a0;
-  pointer-events: none;
 }
 
-/* Eye toggle — overrides the left-icon rule */
 .togglePassword {
   left: auto !important;
   right: 15px;
   cursor: pointer;
-  pointer-events: all;
 }
 
 .togglePassword:hover {
@@ -118,23 +114,15 @@
   outline: none;
   box-sizing: border-box;
   transition: border 0.2s;
-  /* hide browser password reveal button */
-  -webkit-appearance: none;
 }
 
 .formControl:focus {
   border-color: var(--wa-teal);
 }
 
-/* hide Edge/IE reveal button */
 .formControl::-ms-reveal,
 .formControl::-ms-clear {
-  display: none !important;
-}
-
-.formControl::-webkit-credentials-auto-fill-button,
-.formControl::-webkit-password-reveal-button {
-  display: none !important;
+  display: none;
 }
 
 /* ── Submit button ──────────────────────────── */

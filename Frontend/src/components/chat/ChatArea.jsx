@@ -23,9 +23,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  // ─────────────────────────────────────────────────────────────
-  // WebSockets perfectly in sync without re-subscribing
-  // ─────────────────────────────────────────────────────────────
   const activeContactRef = useRef(activeContact);
   useEffect(() => {
     activeContactRef.current = activeContact;
@@ -134,7 +131,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
     return () => {
       messageSub?.unsubscribe();
       typingSub?.unsubscribe();
-      receiptSub?.unsubscribe();
       statusSub?.unsubscribe();
     };
   }, [connected, user?.email]);

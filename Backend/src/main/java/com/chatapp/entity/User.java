@@ -1,7 +1,6 @@
 package com.chatapp.entity;
 
 import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
 import lombok.Data;
 

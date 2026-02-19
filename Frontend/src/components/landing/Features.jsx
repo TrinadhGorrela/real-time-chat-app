@@ -1,11 +1,27 @@
-import styles from './LandingPage.module.css';
+import styles from "./LandingPage.module.css";
 
 const Features = () => {
   const features = [
-    { icon: 'fa-bolt', title: 'Real-time messaging', desc: 'Send and receive messages instantly with WebSocket-based delivery.' },
-    { icon: 'fa-eye', title: 'Read receipts', desc: 'See when your messages are delivered and read with blue ticks.' },
-    { icon: 'fa-user-check', title: 'Online status', desc: "Know when your friends are online or view their last seen time." },
-    { icon: 'fa-user-plus', title: 'Friend requests', desc: 'Send, accept, or decline chat requests to control your contacts.' },
+    { 
+      icon: 'fa-lock', 
+      title: 'Private & Secure', 
+      desc: 'Your chat conversations are end-to-end encrypted, so feel free to speak your mind. Your privacy is fully protected.' 
+    },
+    { 
+      icon: 'fa-bolt', 
+      title: 'Real-time messaging', 
+      desc: 'Messages are delivered instantly. It feels like you’re talking face-to-face.' 
+    },
+    { 
+      icon: 'fa-comment-dots', 
+      title: 'Stay Connected', 
+      desc: 'See who is online, watch them type in real-time, and know the exact moment your messages are read.' 
+    },
+    { 
+      icon: 'fa-user-plus', 
+      title: 'Friend Requests', 
+      desc: 'Send a request to connect. You can only start chatting once they accept your invite, keeping you in full control.' 
+    },
   ];
 
   return (

@@ -157,7 +157,6 @@
   color: #ef4444;
 }
 
-/* ── Mobile: wider bubbles, smaller images ── */
 @media (max-width: 600px) {
   .message {
     max-width: 82%;

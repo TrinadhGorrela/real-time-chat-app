@@ -32,19 +32,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-
             if (token != null && !token.trim().isEmpty() && !token.equalsIgnoreCase("null")) {
                 try {
                     username = jwtUtil.extractUsername(token);
                 } catch (Exception e) {
-                    System.out.println("⚠️ Warning: Invalid JWT Token received: " + e.getMessage());
+                    System.out.println("Warning: Invalid JWT Token received: " + e.getMessage());
                 }
             }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            
+
             if (jwtUtil.validateToken(token, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
                         null, userDetails.getAuthorities());

@@ -82,6 +82,11 @@
   transition: border 0.2s;
 }
 
+.formControl::-ms-reveal,
+.formControl::-ms-clear {
+  display: none;
+}
+
 .formControl:focus {
   border-color: var(--wa-teal);
 }

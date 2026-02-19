@@ -40,16 +40,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;              
-  margin-top: 25px;      
+  gap: 16px;
+  margin-top: 25px;
   width: 100%;
 }
 
 .buttonGroup button:first-child {
-  margin-right: 8px; 
+  margin-right: 8px;
 }
 
-.btnPrimary, .btnDanger, .btnSecondary {
+.btnPrimary,
+.btnDanger,
+.btnSecondary {
   min-width: 100px;
   padding: 10px 20px;
   border-radius: 8px;
@@ -76,9 +78,9 @@
   cursor: not-allowed;
 }
 .btnSecondary {
-  background: #f0f2f5;     
-  border: 1px solid #d1d7db; 
-  color: #54656f;            
+  background: #f0f2f5;
+  border: 1px solid #d1d7db;
+  color: #54656f;
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -157,10 +159,10 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); 
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center; 
+  align-items: center;
   z-index: 62;
 }
 
@@ -171,10 +173,16 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 400px;
-  animation: fadeIn 0.2s ease-out; 
+  animation: fadeIn 0.2s ease-out;
 }
 
 @keyframes fadeIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }

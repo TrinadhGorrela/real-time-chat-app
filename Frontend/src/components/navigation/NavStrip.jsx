@@ -53,12 +53,14 @@ const NavStrip = ({ onAddFriend, onShowRequests, pendingCount, mobileView }) => 
 
   return (
     <nav className={`${styles.navStrip} ${mobileView === 'chat' ? styles.hideOnMobileChat : ''}`}>
-      <div className={styles.navLogo} title="ChatApp">
+
+      <div className={styles.brandContainer} title="ChatApp">
         <img
           src="/image/logo.png"
           alt="Chat Logo"
-          style={{ width: "45px", height: "40px", objectFit: "contain" }}
+          className={styles.brandLogo}
         />
+        <h2 className={styles.brandText}>Chat Application</h2>
       </div>
 
       <div

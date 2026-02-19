@@ -90,11 +90,6 @@
   color: #ffffff;
 }
 
-.btnLarge {
-  padding: 14px 32px;
-  font-size: 1.05rem;
-}
-
 .heroContainer {
   display: flex;
   align-items: center;
@@ -137,6 +132,13 @@
   max-width: 380px;
   margin: 0 auto;
   animation: floating 4s ease-in-out infinite;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroVisuals {
+    animation: none;
+  }
 }
 
 @keyframes floating {
@@ -237,9 +239,12 @@
 }
 
 .featuresSection {
-  padding: 90px 10% 80px;
+  padding: 90px 10% 150px; 
   background-color: #f5f6f6;
-  min-height: 60vh;
+  min-height: 80vh; 
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
 }
 
 .featuresTitle {
@@ -290,16 +295,17 @@
 .footer {
   background-color: #0a1014;
   color: #d1d7db;
-  padding: 14px 10%;
-  font-size: 0.85rem;
+  padding: 20px 10%;
+  clear: both;
 }
 
 .footerContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   flex-wrap: wrap;
+  text-align: center;
 }
 
 .footer a {
@@ -317,7 +323,15 @@
     flex-direction: column;
     text-align: center;
     height: auto;
-    padding: 60px 8%;
+    min-height: auto;
+    padding: 40px 8% 40px;
+    flex-wrap: nowrap;
+  }
+
+  .heroVisuals {
+    max-width: 90%;
+    margin: 40px auto 0;
+    display: block !important;
   }
 
   .heroText p {
@@ -340,15 +354,18 @@
     padding: 15px;
     height: auto;
     flex-direction: row;
+    justify-content: center; 
   }
 
   .logo {
     font-size: 1.1rem;
-    flex: 1;
+    white-space: nowrap; 
+    justify-content: center; 
+    gap: 6px;
   }
 
   .navButtons {
-    gap: 10px;
+    display: none;
   }
 
   .btn {
@@ -357,10 +374,32 @@
   }
 
   .featuresSection {
-    padding: 60px 6%;
+    padding: 50px 6%;
+    display: block !important;
+    height: auto !important;
+    min-height: max-content !important;
+    overflow: visible !important;
+  }
+
+  .featuresGrid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 24px;
+    height: auto !important;
   }
 
   .chatMock {
-    max-width: 90%;
+    max-width: 100%;
+  }
+
+  .footer {
+    position: relative !important;
+    margin-top: auto !important;
+    z-index: 10;
+  }
+
+  .footerContent {
+    flex-direction: column;
+    gap: 15px;
   }
 }

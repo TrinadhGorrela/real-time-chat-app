@@ -62,24 +62,6 @@ public class ChatController {
         return saved;
     }
 
-    // // ============================================
-    // // 2. READ RECEIPT (WebSocket)
-    // // ============================================
-    // @MessageMapping("/chat.readMessage")
-    // public void sendReadReceipt(@Payload Message receipt) {
-    //     if (receipt.getReceiver() != null) {
-    //         String originalSender = receipt.getReceiver();
-
-    //         simpMessagingTemplate.convertAndSendToUser(
-    //                 originalSender, 
-    //                 "/queue/read-receipts", 
-    //                 receipt
-    //         );
-            
-    //         messageRepo.markMessagesAsRead(originalSender, receipt.getSender());
-    //     }
-    // }
-
     // ============================================
     // 2. READ RECEIPT (WebSocket)
     // ============================================
@@ -88,15 +70,12 @@ public class ChatController {
         if (receipt.getReceiver() != null) {
             String originalSender = receipt.getReceiver(); 
             String reader = receipt.getSender();
-
             messageRepo.markMessagesAsRead(originalSender, reader);
-
             Map<String, Object> readEvent = Map.of(
                     "type", "READ_RECEIPT",
                     "reader", reader
             );
 
-            // 3. Send it to the MAIN private topic that ChatApp.jsx is actually subscribed to
             simpMessagingTemplate.convertAndSend("/topic/private/" + originalSender, readEvent);
         }
     }
@@ -123,6 +102,9 @@ public class ChatController {
         return ResponseEntity.notFound().build();
     }
 
+    // ============================================
+    // 5. Typing Indicator (WebSocket)
+    // ============================================
     @MessageMapping("/chat.typing")
     public void sendTypingStatus(@Payload Map<String, String> typingStatus) {
         String receiver = typingStatus.get("receiver");

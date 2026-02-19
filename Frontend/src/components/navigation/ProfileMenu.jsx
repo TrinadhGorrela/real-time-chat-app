@@ -1,7 +1,14 @@
-import { useEffect, useRef } from 'react';
-import styles from './ProfileMenu.module.css';
+import { useEffect, useRef } from "react";
+import styles from "./ProfileMenu.module.css";
 
-const ProfileMenu = ({ user, pendingCount, onAddFriend, onOpenRequests, onLogout, onClose }) => {
+const ProfileMenu = ({
+  user,
+  pendingCount,
+  onAddFriend,
+  onOpenRequests,
+  onLogout,
+  onClose,
+}) => {
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -10,15 +17,15 @@ const ProfileMenu = ({ user, pendingCount, onAddFriend, onOpenRequests, onLogout
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
   return (
     <div className={styles.profileMenu} ref={menuRef}>
       <div className={styles.menuHeader}>
-        <div style={{ fontSize: '0.8rem' }}>Signed in as</div>
-        <div className={styles.userName}>{user?.name || 'User'}</div>
+        <div style={{ fontSize: "0.8rem" }}>Signed in as</div>
+        <div className={styles.userName}>{user?.name || "User"}</div>
       </div>
 
       <div className={styles.menuItem} onClick={onAddFriend}>

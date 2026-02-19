@@ -1,26 +1,29 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
   define: {
-    global: 'globalThis',
+    global: "globalThis",
   },
   server: {
     port: 3000,
     proxy: {
-      '/chatapp': {
-        target: 'http://localhost:8081',
+      "/chatapp": {
+        target: "https://localhost:8081",
         changeOrigin: true,
+        secure: false,
       },
-      '/files': {
-        target: 'http://localhost:8081',
+      "/files": {
+        target: "https://localhost:8081",
         changeOrigin: true,
+        secure: false,
       },
-      '/ws': {
-        target: 'http://localhost:8081',
+      "/ws": {
+        target: "https://localhost:8081",
         changeOrigin: true,
         ws: true,
+        secure: false,
       },
     },
   },

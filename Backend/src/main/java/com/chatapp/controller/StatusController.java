@@ -29,7 +29,7 @@ public class StatusController {
             return ResponseEntity.status(401).body("Unauthenticated");
         }
 
-        String email = auth.getName(); // comes from JwtAuthFilter
+        String email = auth.getName(); 
         User user = userRepository.findByEmail(email);
 
         if (user != null) {

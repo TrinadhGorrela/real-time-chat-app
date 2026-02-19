@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/files")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8081"}, allowCredentials = "true")
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8081" }, allowCredentials = "true")
 public class FileController {
 
     @Autowired
@@ -46,35 +46,33 @@ public class FileController {
     @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
         Resource file = filesStorageService.load(filename);
-        
+
         if (file != null && file.exists()) {
             String contentType = getContentTypeFromFilename(filename);
             return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
-                // ✅ Add CORS headers explicitly
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000")
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
-                .body(file);
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000")
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
+                    .body(file);
         }
-        
+
         return ResponseEntity.notFound().build();
     }
-    
-    // ✅ Handle OPTIONS requests for CORS preflight
+
     @RequestMapping(method = RequestMethod.OPTIONS)
     public ResponseEntity<?> handleOptions() {
         return ResponseEntity.ok()
-            .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000")
-            .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
-            .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*")
-            .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
-            .build();
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000")
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*")
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
+                .build();
     }
-    
+
     private String getContentTypeFromFilename(String filename) {
         String ext = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
-        return switch(ext) {
+        return switch (ext) {
             case "jpg", "jpeg" -> "image/jpeg";
             case "png" -> "image/png";
             case "gif" -> "image/gif";

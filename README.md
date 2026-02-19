@@ -287,6 +287,11 @@ chatapp/
 
 ## Screenshots
 
+### Home
+<p float="left">
+  <img src="/Screenshots/Home Page.png" width="45%" />
+</p>
+
 ### Login & Register
 <p float="left">
   <img src="/Screenshots/Login Page.png" width="45%" />
@@ -295,7 +300,6 @@ chatapp/
 
 ### Chat Interface
 <p float="left">
-  <img src="/Screenshots/Home Page.png" width="45%" />
   <img src="/Screenshots/Chat Area.png" width="45%" />
 </p>
 

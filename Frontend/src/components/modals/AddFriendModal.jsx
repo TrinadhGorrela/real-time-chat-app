@@ -1,23 +1,25 @@
-import { useState } from 'react';
-import friendService from '../../services/friendService';
-import styles from './Modal.module.css';
+import { useState } from "react";
+import friendService from "../../services/friendService";
+import styles from "./Modal.module.css";
 
 const AddFriendModal = ({ onClose, onSuccess }) => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
     try {
-      const result = await friendService.sendFriendRequest(email.trim().toLowerCase());
-      alert(result.message || 'Friend request sent!');
+      const result = await friendService.sendFriendRequest(
+        email.trim().toLowerCase(),
+      );
+      alert(result.message || "Friend request sent!");
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send friend request');
+      setError(err.response?.data?.message || "Failed to send friend request");
     } finally {
       setLoading(false);
     }
@@ -39,10 +41,18 @@ const AddFriendModal = ({ onClose, onSuccess }) => {
             autoFocus
           />
           <div className={styles.buttonGroup}>
-            <button type="submit" className={styles.btnPrimary} disabled={loading}>
-              {loading ? 'Sending...' : 'Send Request'}
+            <button
+              type="submit"
+              className={styles.btnPrimary}
+              disabled={loading}
+            >
+              {loading ? "Sending..." : "Send Request"}
             </button>
-            <button type="button" className={styles.btnSecondary} onClick={onClose}>
+            <button
+              type="button"
+              className={styles.btnSecondary}
+              onClick={onClose}
+            >
               Cancel
             </button>
           </div>

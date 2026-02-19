@@ -14,7 +14,7 @@ export const WebSocketProvider = ({ children }) => {
   useEffect(() => {
     if (!user || !token) return;
 
-    const socket = new SockJS('http://localhost:8081/ws');
+    const socket = new SockJS(import.meta.env.VITE_WS_URL);
     const client = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
