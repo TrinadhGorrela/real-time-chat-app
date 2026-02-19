@@ -7,6 +7,7 @@ import MessageInput from "./MessageInput";
 import WelcomeScreen from "./WelcomeScreen";
 import DateHeader from "./DateHeader";
 import ConfirmModal from "../modals/ConfirmModal";
+import MediaModal from "../modals/MediaModal";
 import chatService from "../../services/chatService";
 import authService from "../../services/authService";
 import styles from "./ChatArea.module.css";
@@ -19,6 +20,8 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
   const [status, setStatus] = useState({ isOnline: false, lastSeen: null });
   const [showDeleteFriendModal, setShowDeleteFriendModal] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState(null);
+  const [mediaToView, setMediaToView] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
@@ -34,6 +37,8 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
     setMessages([]);
     setTyping(false);
     setStatus({ isOnline: false, lastSeen: null });
+    setMediaToView(null);
+    setLoading(true);
 
     chatService
       .getChatHistory(
@@ -41,7 +46,8 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
         activeContact.email.toLowerCase(),
       )
       .then((h) => setMessages(h || []))
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setLoading(false));
 
     authService
       .checkStatus(activeContact.email)
@@ -195,6 +201,10 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
     setMessageToDelete(messageId);
   };
 
+  const handleMediaClick = (fileUrl, type) => {
+    setMediaToView({ fileUrl, type });
+  };
+
   const confirmDeleteMessage = async () => {
     try {
       await chatService.deleteMessage(messageToDelete);
@@ -241,22 +251,37 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
           />
 
           <div className={styles.messages} id="chat-messages">
-            {groupMessagesByDate().map((item, i) =>
-              item.type === "date" ? (
-                <DateHeader key={`d-${i}`} date={item.date} />
-              ) : (
-                <MessageBubble
-                  key={item.data.id || i}
-                  message={item.data}
-                  isOwn={
-                    item.data.sender?.toLowerCase() ===
-                    user?.email?.toLowerCase()
-                  }
-                  onDelete={handleDeleteMessageClick}
-                />
-              ),
+            {loading ? (
+              <div style={{ 
+                flex: 1, 
+                display: "flex", 
+                justifyContent: "center", 
+                alignItems: "center",
+                color: "#00a884" 
+              }}>
+                <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
+              </div>
+            ) : (
+              <>
+                {groupMessagesByDate().map((item, i) =>
+                  item.type === "date" ? (
+                    <DateHeader key={`d-${i}`} date={item.date} />
+                  ) : (
+                    <MessageBubble
+                      key={item.data.id || i}
+                      message={item.data}
+                      isOwn={
+                        item.data.sender?.toLowerCase() ===
+                        user?.email?.toLowerCase()
+                      }
+                      onDelete={handleDeleteMessageClick}
+                      onMediaClick={handleMediaClick}
+                    />
+                  ),
+                )}
+                <div ref={messagesEndRef} />
+              </>
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           <MessageInput onSendMessage={sendMessage} onTyping={handleTyping} />
@@ -278,6 +303,14 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
           message="This message will be delete from you. This action cannot be undone."
           onConfirm={confirmDeleteMessage}
           onCancel={() => setMessageToDelete(null)}
+        />
+      )}
+
+      {mediaToView && (
+        <MediaModal
+          fileUrl={mediaToView.fileUrl}
+          type={mediaToView.type}
+          onClose={() => setMediaToView(null)}
         />
       )}
     </main>

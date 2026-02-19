@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import fileService from "../../services/fileService";
 import styles from "./MessageInput.module.css";
+import ConfirmModal from "../modals/ConfirmModal";
+import CustomAudioPlayer from "./CustomAudioPlayer";
 
 const MessageInput = ({ onSendMessage, onTyping }) => {
   const [text, setText] = useState("");
@@ -9,6 +11,8 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [caption, setCaption] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const MAX_SIZE = 70 * 1024 * 1024;
 
   useEffect(() => {
     return () => {
@@ -39,9 +43,20 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setSelectedFile(file);
+    if (file.size > MAX_SIZE) {
+      setErrorMessage(
+        "This file exceeds the upload limit (70MB). Please select a smaller file.",
+      );
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
 
-    if (file.type.startsWith("image/")) {
+    setSelectedFile(file);
+    if (
+      file.type.startsWith("image/") ||
+      file.type.startsWith("video/") ||
+      file.type.startsWith("audio/")
+    ) {
       setPreviewUrl(URL.createObjectURL(file));
     } else {
       setPreviewUrl(null);
@@ -63,7 +78,15 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
       let messageType = "FILE";
       if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) {
         messageType = "IMAGE";
-      } else if (["pdf", "doc", "docx", "txt"].includes(ext)) {
+      } else if (["mp4", "webm", "ogg", "mov", "mkv", "avi"].includes(ext)) {
+        messageType = "VIDEO";
+      } else if (["mp3", "wav", "mpeg"].includes(ext)) {
+        messageType = "AUDIO";
+      } else if (
+        ["pdf", "doc", "docx", "txt", "ppt", "pptx", "xls", "xlsx"].includes(
+          ext,
+        )
+      ) {
         messageType = "DOCUMENT";
       }
 
@@ -77,7 +100,13 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
       cancelPreview();
     } catch (err) {
       console.error("File upload failed:", err);
-      alert("Failed to upload file: " + err.message);
+      let msg =
+        "Upload failed: " + (err.response?.data?.message || err.message);
+      if (err.code === "ECONNABORTED") {
+        msg =
+          "Upload failed: Request timed out. internet connection might be slow.";
+      }
+      setErrorMessage(msg);
     } finally {
       setUploading(false);
     }
@@ -98,21 +127,40 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
             <button className={styles.closePreviewBtn} onClick={cancelPreview}>
               <i className="fa-solid fa-xmark"></i>
             </button>
-            <span>Preview</span>
+            <span>{selectedFile.name}</span>
           </div>
 
           <div className={styles.previewBody}>
             {previewUrl ? (
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className={styles.imagePreview}
-              />
+              selectedFile?.type.startsWith("video/") ? (
+                <video
+                  key={previewUrl}
+                  controls
+                  playsInline
+                  className={styles.imagePreview}
+                >
+                  <source src={previewUrl} type={selectedFile.type} />
+                  Your browser does not support the video tag.
+                </video>
+              ) : selectedFile?.type.startsWith("audio/") ? (
+                <div className={styles.audioPreview}>
+                   <CustomAudioPlayer src={previewUrl} />
+                </div>
+              ) : (
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className={styles.imagePreview}
+                />
+              )
             ) : (
               <div className={styles.docPreview}>
                 <i
-                  className="fa-solid fa-file-pdf"
-                  style={{ fontSize: "60px", color: "#d32f2f" }}
+                  className={getIconClass(selectedFile.name)}
+                  style={{
+                    fontSize: "60px",
+                    color: getIconColor(selectedFile.name),
+                  }}
                 ></i>
                 <div className={styles.previewFileName}>
                   {selectedFile.name}
@@ -155,7 +203,7 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
         <input
           type="file"
           ref={fileInputRef}
-          accept="image/*,.pdf,.doc,.docx,.txt"
+          accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx"
           style={{ display: "none" }}
           onChange={handleFileSelect}
         />
@@ -187,8 +235,41 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
           <i className="fa-solid fa-paper-plane"></i>
         </button>
       </div>
+      {errorMessage && (
+        <ConfirmModal
+          title="Upload Error"
+          message={errorMessage}
+          confirmText="Ok"
+          isDanger={true}
+          onConfirm={() => setErrorMessage(null)}
+        />
+      )}
     </>
   );
 };
 
 export default MessageInput;
+
+const getIconClass = (fileName) => {
+  if (!fileName) return "fa-solid fa-file";
+  const ext = fileName.split(".").pop().toLowerCase();
+  if (["pdf"].includes(ext)) return "fa-solid fa-file-pdf";
+  if (["doc", "docx"].includes(ext)) return "fa-solid fa-file-word";
+  if (["xls", "xlsx"].includes(ext)) return "fa-solid fa-file-excel";
+  if (["ppt", "pptx"].includes(ext)) return "fa-solid fa-file-powerpoint";
+  if (["txt"].includes(ext)) return "fa-solid fa-file-lines";
+  if (["mp3", "wav"].includes(ext)) return "fa-solid fa-file-audio";
+  return "fa-solid fa-file";
+};
+
+const getIconColor = (fileName) => {
+  if (!fileName) return "#666";
+  const ext = fileName.split(".").pop().toLowerCase();
+  if (["pdf"].includes(ext)) return "#d32f2f";
+  if (["doc", "docx"].includes(ext)) return "#2b579a";
+  if (["xls", "xlsx"].includes(ext)) return "#217346";
+  if (["ppt", "pptx"].includes(ext)) return "#d24726";
+  if (["txt"].includes(ext)) return "#666";
+  if (["mp3", "wav"].includes(ext)) return "#a020f0";
+  return "#666";
+};

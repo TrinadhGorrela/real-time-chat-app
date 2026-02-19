@@ -52,6 +52,62 @@
   opacity: 0.9;
 }
 
+.messageVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.videoContainer {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: black;
+}
+
+.playOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 2;
+}
+
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(240, 240, 240, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  color: #00a884;
+}
+
+.videoContainer:hover .playOverlay {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.playIcon {
+  font-size: 3rem;
+  color: white;
+  opacity: 0.9;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
 .fileContentOwn,
 .fileContentOther {
   display: flex;

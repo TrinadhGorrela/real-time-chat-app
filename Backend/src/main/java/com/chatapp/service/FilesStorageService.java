@@ -22,7 +22,9 @@ public class FilesStorageService {
     private Path fileStorageLocation;
 
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
-            "jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "txt");
+            "jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "txt",
+            "mp4", "webm", "ogg", "mov", "mkv", "avi",
+            "mp3", "wav", "ppt", "pptx");
 
     @PostConstruct
     public void init() {
@@ -72,6 +74,15 @@ public class FilesStorageService {
             }
         } catch (IOException e) {
             throw new RuntimeException("Error loading file: " + filename, e);
+        }
+    }
+
+    public boolean delete(String filename) {
+        try {
+            Path file = fileStorageLocation.resolve(filename);
+            return Files.deleteIfExists(file);
+        } catch (IOException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
         }
     }
 

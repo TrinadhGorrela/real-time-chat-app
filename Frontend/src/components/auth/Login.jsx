@@ -69,7 +69,7 @@ const Login = () => {
           </div>
 
           <button type="submit" className={styles.btnPrimary} disabled={loading}>
-            {loading ? 'Logging in...' : 'Log In'}
+            {loading ? <i className="fa-solid fa-spinner fa-spin"></i> : 'Log In'}
           </button>
 
           <div className={styles.registerLink}>

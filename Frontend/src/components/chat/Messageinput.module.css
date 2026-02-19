@@ -74,6 +74,19 @@
   text-align: center;
 }
 
+.audioPreview {
+  width: 90%;
+  max-width: 400px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  gap: 20px;
+}
+
 .previewFileName {
   font-weight: 600;
   color: #111b21;

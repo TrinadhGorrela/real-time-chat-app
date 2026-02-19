@@ -130,7 +130,7 @@ const Register = () => {
           </div>
 
           <button type="submit" className={styles.btnPrimary} disabled={loading}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
+            {loading ? <i className="fa-solid fa-spinner fa-spin"></i> : 'Sign Up'}
           </button>
 
           <div className={styles.loginLink}>

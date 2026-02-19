@@ -25,9 +25,11 @@ const ConfirmModal = ({
           >
             {confirmText}
           </button>
-          <button className={styles.btnSecondary} onClick={onCancel}>
-            Cancel
-          </button>
+          {onCancel && (
+            <button className={styles.btnSecondary} onClick={onCancel}>
+              Cancel
+            </button>
+          )}
         </div>
       </div>
     </div>

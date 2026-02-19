@@ -4,9 +4,11 @@ import com.chatapp.service.FilesStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
@@ -22,13 +24,17 @@ public class FileController {
     public ResponseEntity<Map<String, Object>> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             String fileUrl = filesStorageService.save(file);
-
             String contentType = file.getContentType();
             String type = "FILE";
             if (contentType != null) {
                 if (contentType.startsWith("image/"))
                     type = "IMAGE";
-                else if (contentType.contains("pdf") || contentType.contains("word") || contentType.contains("text"))
+                else if (contentType.startsWith("video/"))
+                    type = "VIDEO";
+                else if (contentType.startsWith("audio/"))
+                    type = "AUDIO";
+                else if (contentType.contains("pdf") || contentType.contains("word") || contentType.contains("text")
+                        || contentType.contains("presentation") || contentType.contains("powerpoint"))
                     type = "DOCUMENT";
             }
 
@@ -41,6 +47,16 @@ public class FileController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleMaxSizeException(MaxUploadSizeExceededException exc) {
+        return ResponseEntity
+                .status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(Map.of(
+                        "message", "File is too large!",
+                        "details", "The maximum allowed limit has been exceeded. Please upload a smaller file.",
+                        "status", HttpStatus.PAYLOAD_TOO_LARGE.value()));
     }
 
     @GetMapping("/{filename:.+}")
@@ -81,8 +97,16 @@ public class FileController {
             case "txt" -> "text/plain";
             case "doc", "docx" -> "application/msword";
             case "xls", "xlsx" -> "application/vnd.ms-excel";
-            case "ppt", "pptx" -> "application/vnd.ms-powerpoint";
             case "mp4" -> "video/mp4";
+            case "webm" -> "video/webm";
+            case "ogg" -> "video/ogg";
+            case "mov" -> "video/quicktime";
+            case "mkv" -> "video/x-matroska";
+            case "avi" -> "video/x-msvideo";
+            case "mp3" -> "audio/mpeg";
+            case "wav" -> "audio/wav";
+            case "ppt" -> "application/vnd.ms-powerpoint";
+            case "pptx" -> "application/vnd.openxmlformats-officedocument.presentationml.presentation";
             default -> "application/octet-stream";
         };
     }

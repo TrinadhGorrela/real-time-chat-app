@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8081"}, allowCredentials = "true")
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8081" }, allowCredentials = "true")
 public class ChatController {
 
     @Autowired
@@ -31,7 +31,7 @@ public class ChatController {
     // 1. SENDING MESSAGES (WebSocket)
     // ============================================
     @MessageMapping("/chat")
-    @SendToUser("/queue/private-chat") 
+    @SendToUser("/queue/private-chat")
     @Transactional
     public Message sendMessage(@Payload Message chatMessage) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -68,13 +68,12 @@ public class ChatController {
     @MessageMapping("/chat.readMessage")
     public void sendReadReceipt(@Payload Message receipt) {
         if (receipt.getReceiver() != null) {
-            String originalSender = receipt.getReceiver(); 
+            String originalSender = receipt.getReceiver();
             String reader = receipt.getSender();
             messageRepo.markMessagesAsRead(originalSender, reader);
             Map<String, Object> readEvent = Map.of(
                     "type", "READ_RECEIPT",
-                    "reader", reader
-            );
+                    "reader", reader);
 
             simpMessagingTemplate.convertAndSend("/topic/private/" + originalSender, readEvent);
         }
@@ -93,13 +92,39 @@ public class ChatController {
     // ============================================
     // 4. DELETE MESSAGE (REST API)
     // ============================================
+    @Autowired
+    private com.chatapp.service.FilesStorageService filesStorageService;
+
+    // ============================================
+    // 4. DELETE MESSAGE (REST API)
+    // ============================================
     @DeleteMapping("/chatapp/message/{id}")
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
-        if (messageRepo.existsById(id)) {
-            messageRepo.deleteById(id);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
+        return messageRepo.findById(id).map(message -> {
+            // Delete file if exists
+            if (message.getFileUrl() != null && !message.getFileUrl().isEmpty()) {
+                String filename = message.getFileName();
+                // However, fileUrl usually looks like "/files/timestamp_uuid.ext"
+                // and fileName is just the original name usually?
+                // Let's check save method in FilesStorageService.
+                // It returns "/files/" + filename.
+                // We need to extract the actual stored filename from the URL or store it
+                // separately.
+
+                // Actually, looking at FileController (not shown here but assumed), usually we
+                // serve via /files/{filename}.
+                // The Message entity saves fileUrl.
+                // Let's assume fileUrl is like "http://.../files/xyz.jpg" or "/files/xyz.jpg".
+                // We need to extract "xyz.jpg".
+
+                String fileUrl = message.getFileUrl();
+                String storedFilename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+                filesStorageService.delete(storedFilename);
+            }
+
+            messageRepo.delete(message);
+            return ResponseEntity.ok().<Void>build();
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     // ============================================

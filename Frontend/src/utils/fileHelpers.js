@@ -41,6 +41,7 @@ export const getFileIconColor = (fileName) => {
 export const getMessageType = (file) => {
   const ext = file.name.split(".").pop().toLowerCase();
   if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "IMAGE";
+  if (["mp4", "webm", "ogg"].includes(ext)) return "VIDEO";
   if (["pdf", "doc", "docx", "txt"].includes(ext)) return "DOCUMENT";
   return "FILE";
 };
