@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from "react";
 
 const AuthContext = createContext(null);
 
@@ -8,9 +8,9 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedEmail = localStorage.getItem('email');
-    const storedUsername = localStorage.getItem('username');
+    const storedToken = localStorage.getItem("token");
+    const storedEmail = localStorage.getItem("email");
+    const storedUsername = localStorage.getItem("username");
 
     if (storedToken && storedEmail && storedUsername) {
       setToken(storedToken);
@@ -22,9 +22,15 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setToken(userData.token);
     setUser(userData.user);
-    localStorage.setItem('token', userData.token);
-    localStorage.setItem('email', userData.user.email);
-    localStorage.setItem('username', userData.user.name);
+    localStorage.setItem("token", userData.token);
+    localStorage.setItem("email", userData.user.email);
+    localStorage.setItem("username", userData.user.name);
+  };
+
+  const updateUserProfile = (newData) => {
+    setUser(newData);
+    localStorage.setItem("email", newData.email);
+    localStorage.setItem("username", newData.name);
   };
 
   const logout = () => {
@@ -38,6 +44,7 @@ export const AuthProvider = ({ children }) => {
     token,
     login,
     logout,
+    updateUserProfile,
     isAuthenticated: !!token,
     loading,
   };
@@ -47,6 +54,6 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 };

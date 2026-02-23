@@ -4,12 +4,28 @@ import { formatFileSize, escapeHtml } from "../../utils/fileHelpers";
 import styles from "./MessageBubble.module.css";
 import CustomAudioPlayer from "./CustomAudioPlayer";
 
-const MessageBubble = ({ message, isOwn, onDelete, onMediaClick }) => {
+const MessageBubble = ({
+  message,
+  isOwn,
+  onDelete,
+  onMediaClick,
+  onMediaLoaded,
+}) => {
   const timeStr = formatMessageTime(message.timestamp);
   const isRead = message.status === "READ";
 
   const [imgLoaded, setImgLoaded] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setImgLoaded(true);
+    if (onMediaLoaded) onMediaLoaded();
+  };
+
+  const handleVideoLoad = () => {
+    setVideoLoaded(true);
+    if (onMediaLoaded) onMediaLoaded();
+  };
 
   const renderContent = () => {
     let mediaContent = null;
@@ -27,11 +43,11 @@ const MessageBubble = ({ message, isOwn, onDelete, onMediaClick }) => {
             src={message.fileUrl}
             alt="Image"
             className={styles.messageImage}
-            onLoad={() => setImgLoaded(true)}
+            onLoad={handleImageLoad}
             onClick={() => onMediaClick(message.fileUrl, "IMAGE")}
             style={{ display: imgLoaded ? "block" : "none" }}
             onError={(e) => {
-              setImgLoaded(true); // Stop spinner on error
+              handleImageLoad(); // Stop spinner on error
               e.target.src =
                 "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4=";
             }}
@@ -60,7 +76,7 @@ const MessageBubble = ({ message, isOwn, onDelete, onMediaClick }) => {
             className={styles.messageVideo}
             preload="metadata"
             muted
-            onLoadedData={() => setVideoLoaded(true)}
+            onLoadedData={handleVideoLoad}
           />
           {videoLoaded && (
             <div className={styles.playOverlay}>

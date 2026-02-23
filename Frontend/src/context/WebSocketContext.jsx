@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
-import { useAuth } from './AuthContext';
+import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { useAuth } from "./AuthContext";
 
 const WebSocketContext = createContext(null);
 
@@ -20,16 +20,17 @@ export const WebSocketProvider = ({ children }) => {
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
+      connectHeaders: { email: user.email },
     });
 
     client.onConnect = () => {
-      console.log('WebSocket Connected');
+      console.log("WebSocket Connected");
       setConnected(true);
       setStompClient(client);
     };
 
     client.onStompError = (frame) => {
-      console.error('STOMP Error:', frame);
+      console.error("STOMP Error:", frame);
       setConnected(false);
     };
 
@@ -69,6 +70,7 @@ export const WebSocketProvider = ({ children }) => {
 
 export const useWebSocket = () => {
   const context = useContext(WebSocketContext);
-  if (!context) throw new Error('useWebSocket must be used within WebSocketProvider');
+  if (!context)
+    throw new Error("useWebSocket must be used within WebSocketProvider");
   return context;
 };

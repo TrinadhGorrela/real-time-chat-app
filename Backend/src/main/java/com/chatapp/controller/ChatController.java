@@ -27,6 +27,9 @@ public class ChatController {
     @Autowired
     private MessageRepo messageRepo;
 
+    @Autowired
+    private com.chatapp.service.FilesStorageService filesStorageService;
+
     // ============================================
     // 1. SENDING MESSAGES (WebSocket)
     // ============================================
@@ -92,31 +95,12 @@ public class ChatController {
     // ============================================
     // 4. DELETE MESSAGE (REST API)
     // ============================================
-    @Autowired
-    private com.chatapp.service.FilesStorageService filesStorageService;
-
-    // ============================================
-    // 4. DELETE MESSAGE (REST API)
-    // ============================================
     @DeleteMapping("/chatapp/message/{id}")
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
         return messageRepo.findById(id).map(message -> {
             // Delete file if exists
             if (message.getFileUrl() != null && !message.getFileUrl().isEmpty()) {
                 String filename = message.getFileName();
-                // However, fileUrl usually looks like "/files/timestamp_uuid.ext"
-                // and fileName is just the original name usually?
-                // Let's check save method in FilesStorageService.
-                // It returns "/files/" + filename.
-                // We need to extract the actual stored filename from the URL or store it
-                // separately.
-
-                // Actually, looking at FileController (not shown here but assumed), usually we
-                // serve via /files/{filename}.
-                // The Message entity saves fileUrl.
-                // Let's assume fileUrl is like "http://.../files/xyz.jpg" or "/files/xyz.jpg".
-                // We need to extract "xyz.jpg".
-
                 String fileUrl = message.getFileUrl();
                 String storedFilename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
                 filesStorageService.delete(storedFilename);

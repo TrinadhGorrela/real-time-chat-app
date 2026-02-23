@@ -1,6 +1,6 @@
 import UserItem from "./UserItem";
 import SearchBar from "./SearchBar";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import styles from "./Sidebar.module.css";
 
 const Sidebar = ({
@@ -8,18 +8,129 @@ const Sidebar = ({
   activeContact,
   onSelectContact,
   unreadCounts,
+  user,
+  pendingCount,
+  onAddFriend,
+  onShowRequests,
+  onSettingsClick,
+  onLogoutClick,
 }) => {
   const [search, setSearch] = useState("");
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
+  const btnRef = useRef(null);
 
-  const filtered = contacts.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  useEffect(() => {
+    if (!showMenu) return;
+
+    const handleClick = (e) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target) &&
+        btnRef.current &&
+        !btnRef.current.contains(e.target)
+      ) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showMenu]);
+
+  const filtered = contacts
+    .filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      // Both have messages, sort by newest time first
+      if (a.lastMessageTime && b.lastMessageTime) {
+        return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
+      }
+      // Only 'a' has a message, 'a' floats to top
+      if (a.lastMessageTime && !b.lastMessageTime) return -1;
+      // Only 'b' has a message, 'b' floats to top
+      if (!a.lastMessageTime && b.lastMessageTime) return 1;
+
+      // Neither has messages, sort alphabetically by name
+      return a.name.localeCompare(b.name);
+    });
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.sidebarTop}>
-        <h3 className={styles.heading}>Chat Application</h3>
-        <SearchBar value={search} onChange={setSearch} />
+        <div className={styles.profileHeader}>
+          <div
+            ref={btnRef}
+            className={styles.iconButton}
+            onClick={() => setShowMenu((prev) => !prev)}
+            title="Menu"
+          >
+            <i className="fa-solid fa-bars"></i>
+            {pendingCount > 0 && <span className={styles.badgeDot}></span>}
+          </div>
+
+          <div className={styles.searchContainer}>
+            <SearchBar value={search} onChange={setSearch} />
+          </div>
+
+          {showMenu && (
+            <div className={styles.profileMenu} ref={menuRef}>
+              <div className={styles.menuHeader}>
+                <div className={styles.menuSignedIn}>Signed in as</div>
+                <div className={styles.menuUserName}>
+                  {user?.name || "User"}
+                </div>
+                <div className={styles.menuUserEmail}>{user?.email}</div>
+              </div>
+
+              <div
+                className={styles.menuItem}
+                onClick={() => {
+                  setShowMenu(false);
+                  onAddFriend();
+                }}
+              >
+                <i className="fa-solid fa-user-plus"></i>
+                <span>Add Friend</span>
+              </div>
+
+              <div
+                className={styles.menuItem}
+                onClick={() => {
+                  setShowMenu(false);
+                  onSettingsClick();
+                }}
+              >
+                <i className="fa-solid fa-gear"></i>
+                <span>Settings</span>
+              </div>
+
+              <div
+                className={styles.menuItem}
+                onClick={() => {
+                  setShowMenu(false);
+                  onShowRequests();
+                }}
+              >
+                <i className="fa-solid fa-envelope"></i>
+                <span>Requests</span>
+                {pendingCount > 0 && (
+                  <span className={styles.badge}>{pendingCount}</span>
+                )}
+              </div>
+
+              <div
+                className={`${styles.menuItem} ${styles.danger}`}
+                onClick={() => {
+                  setShowMenu(false);
+                  onLogoutClick();
+                }}
+              >
+                <i className="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className={styles.userList}>

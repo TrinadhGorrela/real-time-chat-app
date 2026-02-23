@@ -14,12 +14,125 @@
   flex-shrink: 0;
 }
 
-.heading {
-  padding: 15px 20px 5px;
-  font-size: 1.3rem;
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background-color: #ffffff;
+  height: 59px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.searchContainer {
+  flex: 1;
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #54656f;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.iconButton:hover {
+  background-color: #e4e6eb;
+}
+
+.badgeDot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background-color: #00a884;
+  border-radius: 50%;
+  border: 2px solid #f0f2f5;
+}
+
+/* Dropdown Menu Styles */
+.profileMenu {
+  position: absolute;
+  top: 50px;
+  left: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 200px;
+  overflow: hidden;
+  z-index: 100;
   color: #111b21;
+}
+
+.menuHeader {
+  padding: 15px;
+  border-bottom: 1px solid #e9edef;
+  background-color: #00a884;
+}
+
+.menuSignedIn {
+  font-size: 0.8rem;
+  color: black;
+}
+
+.menuUserName {
+  font-size: 1.05rem;
   font-weight: 700;
-  margin: 0;
+  color: white;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menuUserEmail {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menuItem {
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 0.95rem;
+  color: #3b4a54;
+}
+
+.menuItem:hover {
+  background: #f0f2f5;
+}
+
+.menuItem.danger {
+  color: #ef4444;
+}
+
+.menuItem.danger:hover {
+  background: #fef2f2;
+}
+
+.badge {
+  background: #00a884;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: auto;
 }
 
 .userList {
@@ -44,7 +157,4 @@
 }
 
 @media (max-width: 768px) {
-  .heading {
-    display: none;
-  }
 }

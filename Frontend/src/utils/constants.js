@@ -37,7 +37,6 @@ export const WS_DESTINATIONS = {
   chat: "/app/chat",
   typing: "/app/chat.typing",
   readMessage: "/app/chat.readMessage",
-  statusUpdate: "/app/status.update",
 };
 
 export const MESSAGE_TYPES = {

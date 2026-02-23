@@ -12,13 +12,14 @@ import chatService from "../../services/chatService";
 import authService from "../../services/authService";
 import styles from "./ChatArea.module.css";
 
-const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
+const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
   const { user } = useAuth();
   const { connected, subscribe, send } = useWebSocket();
   const [messages, setMessages] = useState([]);
   const [typing, setTyping] = useState(false);
   const [status, setStatus] = useState({ isOnline: false, lastSeen: null });
   const [showDeleteFriendModal, setShowDeleteFriendModal] = useState(false);
+  const [showClearChatModal, setShowClearChatModal] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState(null);
   const [mediaToView, setMediaToView] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -74,7 +75,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
       if (!msg.content && msg.status === "READ") return;
 
       const sender = msg.sender?.trim().toLowerCase();
-      const recv = msg.receiver?.trim().toLowerCase();
       const contact = activeContactRef.current;
       const contactEmail = contact?.email?.toLowerCase();
 
@@ -126,11 +126,15 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
 
     const statusSub = subscribe("/topic/status", (frame) => {
       const s = JSON.parse(frame.body);
-      if (
-        s.email?.toLowerCase() ===
-        activeContactRef.current?.email?.toLowerCase()
-      ) {
-        setStatus({ isOnline: s.isOnline, lastSeen: s.lastSeen });
+      console.log("Received status update:", s);
+      const currentContactEmail =
+        activeContactRef.current?.email?.toLowerCase();
+      if (s.email?.toLowerCase() === currentContactEmail) {
+        setStatus((prev) => ({
+          ...prev,
+          isOnline: s.isOnline,
+          lastSeen: s.lastSeen,
+        }));
       }
     });
 
@@ -141,8 +145,17 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
     };
   }, [connected, user?.email]);
 
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      const container = document.getElementById("chat-messages");
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }, 100);
+  };
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollToBottom();
   }, [messages]);
 
   useEffect(() => {
@@ -164,12 +177,13 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
     if (!activeContact || !user || !connected) return;
 
     const tempId = `temp_${Date.now()}`;
+    const timestamp = new Date().toISOString();
     const message = {
       sender: user.email,
       receiver: activeContact.email,
       content: content || "",
       status: "SENT",
-      timestamp: new Date().toISOString(),
+      timestamp: timestamp,
       messageType: fileData?.messageType || "TEXT",
       fileUrl: fileData?.fileUrl || "",
       fileName: fileData?.fileName || "",
@@ -178,6 +192,10 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
 
     setMessages((prev) => [...prev, { ...message, id: tempId }]);
     send("/app/chat", message);
+
+    if (onMessageSent) {
+      onMessageSent(activeContact.email, timestamp);
+    }
   };
 
   const handleTyping = () => {
@@ -221,6 +239,17 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
     setShowDeleteFriendModal(false);
   };
 
+  const confirmClearChat = async () => {
+    try {
+      await chatService.clearChat(activeContact.email);
+      setMessages([]);
+    } catch (err) {
+      console.error("Clear chat failed:", err);
+    } finally {
+      setShowClearChatModal(false);
+    }
+  };
+
   const groupMessagesByDate = () => {
     const grouped = [];
     let lastKey = null;
@@ -247,18 +276,21 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
             status={status}
             typing={typing}
             onDeleteFriend={() => setShowDeleteFriendModal(true)}
+            onClearChat={() => setShowClearChatModal(true)}
             onBack={onBack}
           />
 
           <div className={styles.messages} id="chat-messages">
             {loading ? (
-              <div style={{ 
-                flex: 1, 
-                display: "flex", 
-                justifyContent: "center", 
-                alignItems: "center",
-                color: "#00a884" 
-              }}>
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "#00a884",
+                }}
+              >
                 <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
               </div>
             ) : (
@@ -276,9 +308,13 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
                       }
                       onDelete={handleDeleteMessageClick}
                       onMediaClick={handleMediaClick}
+                      onMediaLoaded={() => {
+                        scrollToBottom();
+                      }}
                     />
                   ),
                 )}
+                <div style={{ height: "10px", flexShrink: 0 }} />
                 <div ref={messagesEndRef} />
               </>
             )}
@@ -291,9 +327,18 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack }) => {
       {showDeleteFriendModal && (
         <ConfirmModal
           title="Delete Contact"
-          message={`Are you sure you want to delete ${activeContact.name} ? This will remove your entire chat history.`}
+          message={`Are you sure you want to delete ${activeContact.name}? This will remove your entire chat history.`}
           onConfirm={confirmDeleteFriend}
           onCancel={() => setShowDeleteFriendModal(false)}
+        />
+      )}
+
+      {showClearChatModal && (
+        <ConfirmModal
+          title="Clear Chat"
+          message={`Are you sure you want to clear the chat with ${activeContact.name}? This action cannot be undone.`}
+          onConfirm={confirmClearChat}
+          onCancel={() => setShowClearChatModal(false)}
         />
       )}
 

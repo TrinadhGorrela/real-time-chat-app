@@ -20,18 +20,29 @@
 .sidebarWrapper {
   display: flex;
   flex-shrink: 0;
-  width: 350px; 
+  width: var(--sidebar-width, 350px);
   height: 100%;
-  border-right: 1px solid #e9edef; 
+  border-right: 1px solid #e9edef;
   background: #ffffff;
+  position: relative;
+}
+
+.resizer {
+  position: absolute;
+  top: 0;
+  right: -5px;
+  width: 10px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 10;
 }
 
 .chatWrapper {
   display: flex;
-  flex: 1; 
+  flex: 1;
   min-width: 0;
   height: 100%;
-  background: #efeae2; 
+  background: #efeae2;
 }
 
 /* =========================================
@@ -52,14 +63,18 @@
   }
 
   .sidebarWrapper {
-    top: 56px; 
-    height: calc(100% - 56px);
+    top: 0;
+    height: 100%;
     z-index: 1;
     transform: translateX(0);
   }
 
   .sidebarHidden {
     transform: translateX(-100%);
+  }
+
+  .resizer {
+    display: none;
   }
 
   .chatWrapper {

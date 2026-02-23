@@ -1,9 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { formatTime2 } from "../../utils/dateFormatter";
 import styles from "./ChatHeader.module.css";
 
-const ChatHeader = ({ contact, status, typing, onDeleteFriend, onBack }) => {
+const ChatHeader = ({
+  contact,
+  status,
+  typing,
+  onDeleteFriend,
+  onBack,
+  onClearChat,
+}) => {
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
 
   const toggleMenu = (e) => {
     e.stopPropagation();
@@ -15,11 +38,13 @@ const ChatHeader = ({ contact, status, typing, onDeleteFriend, onBack }) => {
     onDeleteFriend();
   };
 
+  const handleClearChat = () => {
+    setShowMenu(false);
+    onClearChat();
+  };
+
   return (
-    <div
-      className={styles.chatHeader}
-      onClick={() => showMenu && setShowMenu(false)}
-    >
+    <div className={styles.chatHeader}>
       <div className={styles.userInfo}>
         {onBack && (
           <button className={styles.backBtn} onClick={onBack}>
@@ -58,17 +83,25 @@ const ChatHeader = ({ contact, status, typing, onDeleteFriend, onBack }) => {
         </div>
       </div>
 
-      <div className={styles.userActions}>
+      <div className={styles.userActions} ref={menuRef}>
         <button className={styles.kebabBtn} onClick={toggleMenu}>
           <i className="fa-solid fa-ellipsis-vertical"></i>
         </button>
         {showMenu && (
           <div className={styles.actionDropdown}>
             <div
-              className={`${styles.actionItem} ${styles.danger}`}
+              className={`${styles.actionItem} ${styles.delete}`}
               onClick={handleDelete}
             >
-              <i className="fa-solid fa-trash"></i> Delete Friend
+              <i className="fa-solid fa-trash" style={{ color: "#8696a0" }}></i>{" "}
+              Delete Friend
+            </div>
+            <div
+              className={`${styles.actionItem} ${styles.clear}`}
+              onClick={handleClearChat}
+            >
+              <i className="fa-solid fa-broom" style={{ color: "#8696a0" }}></i>{" "}
+              Clear Chat
             </div>
           </div>
         )}

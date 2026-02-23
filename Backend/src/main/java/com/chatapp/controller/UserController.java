@@ -2,8 +2,10 @@ package com.chatapp.controller;
 
 import com.chatapp.entity.User;
 import com.chatapp.entity.Friendship;
+import com.chatapp.entity.Message;
 import com.chatapp.repository.UserRepository;
 import com.chatapp.repository.FriendshipRepository;
+import com.chatapp.repository.MessageRepo;
 import com.chatapp.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/chatapp")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8081"}, allowCredentials = "true")
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8081" }, allowCredentials = "true")
 public class UserController {
 
     @Autowired
@@ -27,6 +29,9 @@ public class UserController {
 
     @Autowired
     private FriendshipRepository friendshipRepository;
+
+    @Autowired
+    private MessageRepo messageRepo;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -98,10 +103,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
         }
 
-        Friendship existing1 = friendshipRepository.findByUserEmailAndFriendEmail(targetEmail, myEmail);
-        Friendship existing2 = friendshipRepository.findByUserEmailAndFriendEmail(myEmail, targetEmail);
+        List<Friendship> existing1 = friendshipRepository.findByUserEmailAndFriendEmail(targetEmail, myEmail);
+        List<Friendship> existing2 = friendshipRepository.findByUserEmailAndFriendEmail(myEmail, targetEmail);
 
-        if (existing1 != null || existing2 != null) {
+        if (!existing1.isEmpty() || !existing2.isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("message", "Request already pending or you are already friends"));
         }
@@ -160,7 +165,19 @@ public class UserController {
         List<Friendship> friendships = friendshipRepository.findByUserEmailAndStatus(myEmail, "ACCEPTED");
 
         List<User> friends = friendships.stream()
-                .map(f -> userRepository.findByEmail(f.getFriendEmail()))
+                .map(f -> {
+                    User friend = userRepository.findByEmail(f.getFriendEmail());
+                    if (friend != null) {
+                        Message lastMsg = messageRepo.findLatestMessage(myEmail, friend.getEmail());
+                        if (lastMsg != null) {
+                            friend.setLastMessageTime(lastMsg.getTimestamp());
+                        }
+
+                        long unread = messageRepo.countUnreadMessages(friend.getEmail(), myEmail);
+                        friend.setUnreadCount((int) unread);
+                    }
+                    return friend;
+                })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
@@ -181,15 +198,15 @@ public class UserController {
         }
 
         try {
-            Friendship f1 = friendshipRepository.findByUserEmailAndFriendEmail(myEmail, friendEmail);
-            Friendship f2 = friendshipRepository.findByUserEmailAndFriendEmail(friendEmail, myEmail);
+            List<Friendship> f1List = friendshipRepository.findByUserEmailAndFriendEmail(myEmail, friendEmail);
+            List<Friendship> f2List = friendshipRepository.findByUserEmailAndFriendEmail(friendEmail, myEmail);
 
-            if (f1 != null) {
-                friendshipRepository.delete(f1);
+            if (!f1List.isEmpty()) {
+                friendshipRepository.deleteAll(f1List);
                 System.out.println("Deleted: " + myEmail + " -> " + friendEmail);
             }
-            if (f2 != null) {
-                friendshipRepository.delete(f2);
+            if (!f2List.isEmpty()) {
+                friendshipRepository.deleteAll(f2List);
                 System.out.println("Deleted: " + friendEmail + " -> " + myEmail);
             }
 
@@ -217,6 +234,107 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("message", "Invalid request"));
+    }
+
+    // ============================================
+    // 9. CHECK STATUS
+    // ============================================
+    @GetMapping("/status/check/{email}")
+    public ResponseEntity<?> checkStatus(@PathVariable String email) {
+        User user = userRepository.findByEmail(email);
+
+        if (user != null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("email", user.getEmail());
+            response.put("isOnline", user.isOnline());
+            response.put("lastSeen", user.getLastSeen() != null ? user.getLastSeen().toString() : null);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // ============================================
+    // 10. Clear Chat
+    // ============================================
+    @PostMapping("/clear-chat")
+    public ResponseEntity<?> clearChat(@RequestBody Map<String, String> request, Principal principal) {
+        String myEmail = principal.getName();
+        String friendEmail = request.get("friend");
+
+        if (friendEmail == null || friendEmail.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Friend email required"));
+        }
+
+        try {
+            messageRepo.deleteConversation(myEmail, friendEmail);
+            System.out.println("Purged conversation history between: " + myEmail + " and " + friendEmail);
+            return ResponseEntity.ok(Map.of("message", "Chat cleared successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(Map.of("message", "Error clearing chat", "error", e.getMessage()));
+        }
+    }
+
+    // ============================================
+    // 11. UPDATE PASSWORD
+    // ============================================
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> request, Principal principal) {
+        String myEmail = principal.getName();
+        String currentPassword = request.get("currentPassword");
+        String newPassword = request.get("newPassword");
+
+        if (currentPassword == null || newPassword == null || newPassword.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Both current and new passwords are required"));
+        }
+
+        try {
+            User user = userRepository.findByEmail(myEmail);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+            }
+
+            if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Incorrect current password"));
+            }
+
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error updating password", "error", e.getMessage()));
+        }
+    }
+
+    // ============================================
+    // 12. UPDATE NAME
+    // ============================================
+    @PostMapping("/update-name")
+    public ResponseEntity<?> updateName(@RequestBody Map<String, String> request, Principal principal) {
+        String myEmail = principal.getName();
+        String newName = request.get("newName");
+
+        if (newName == null || newName.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "New name is required"));
+        }
+
+        try {
+            User user = userRepository.findByEmail(myEmail);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+            }
+
+            user.setName(newName.trim());
+            userRepository.save(user);
+
+            return ResponseEntity.ok(Map.of("message", "Name updated successfully", "newName", user.getName()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error updating name", "error", e.getMessage()));
+        }
     }
 
 }
