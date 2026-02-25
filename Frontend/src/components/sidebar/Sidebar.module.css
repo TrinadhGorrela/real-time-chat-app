@@ -156,5 +156,21 @@
   font-size: 0.95rem;
 }
 
+.loadingState {
+  padding: 40px 20px;
+  text-align: center;
+  color: #8696a0;
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.loadingState i {
+  font-size: 1.5rem;
+  color: #00a884;
+}
+
 @media (max-width: 768px) {
 }

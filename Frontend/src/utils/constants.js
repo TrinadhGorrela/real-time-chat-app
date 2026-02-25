@@ -24,7 +24,7 @@ export const ALLOWED_EXTENSIONS = [
   "docx",
   "txt",
 ];
-export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
 export const WS_TOPICS = {
   privateMessage: (email) => `/topic/private/${email.toLowerCase()}`,

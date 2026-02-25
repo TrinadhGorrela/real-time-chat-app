@@ -35,8 +35,6 @@ const Register = () => {
       const fullName = `${firstName.trim()} ${lastName.trim()}`;
       const newUser = await authService.register(fullName, email.trim(), password);
       login({ token: null, user: { email: newUser.email, name: newUser.name } });
-
-      // Get a real token by logging in
       const loginData = await authService.login(email.trim(), password);
       login(loginData);
       navigate('/chat');

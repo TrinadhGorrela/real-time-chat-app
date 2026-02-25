@@ -8,6 +8,7 @@ const Sidebar = ({
   activeContact,
   onSelectContact,
   unreadCounts,
+  isLoading,
   user,
   pendingCount,
   onAddFriend,
@@ -41,16 +42,12 @@ const Sidebar = ({
   const filtered = contacts
     .filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
-      // Both have messages, sort by newest time first
       if (a.lastMessageTime && b.lastMessageTime) {
         return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
       }
-      // Only 'a' has a message, 'a' floats to top
       if (a.lastMessageTime && !b.lastMessageTime) return -1;
-      // Only 'b' has a message, 'b' floats to top
       if (!a.lastMessageTime && b.lastMessageTime) return 1;
 
-      // Neither has messages, sort alphabetically by name
       return a.name.localeCompare(b.name);
     });
 
@@ -134,7 +131,11 @@ const Sidebar = ({
       </div>
 
       <div className={styles.userList}>
-        {filtered.length > 0 ? (
+        {isLoading ? (
+          <div className={styles.loadingState}>
+            <i className="fa-solid fa-spinner fa-spin"></i> Loading contacts...
+          </div>
+        ) : filtered.length > 0 ? (
           filtered.map((contact) => (
             <UserItem
               key={contact.email}

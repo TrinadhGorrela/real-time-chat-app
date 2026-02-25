@@ -28,6 +28,7 @@ const ChatApp = () => {
   const [toast, setToast] = useState({ show: false, message: "" });
   const [requests, setRequests] = useState([]);
   const [mobileView, setMobileView] = useState("sidebar");
+  const [isLoading, setIsLoading] = useState(true);
 
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const saved = localStorage.getItem("sidebarWidth");
@@ -72,6 +73,7 @@ const ChatApp = () => {
   }
 
   function loadContacts() {
+    setIsLoading(true);
     return friendService
       .getContacts()
       .then((data) => {
@@ -84,7 +86,10 @@ const ChatApp = () => {
         });
         setUnreadCounts((prev) => ({ ...prev, ...counts }));
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   function updateRequestBadge() {
@@ -217,6 +222,7 @@ const ChatApp = () => {
           activeContact={activeContact}
           onSelectContact={handleSelectContact}
           unreadCounts={unreadCounts}
+          isLoading={isLoading}
           user={user}
           pendingCount={pendingCount}
           onAddFriend={() => setShowAddModal(true)}

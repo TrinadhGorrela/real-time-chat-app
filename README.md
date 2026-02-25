@@ -86,8 +86,7 @@ src/
 │   ├── common/            # Toast, DateHeader, WelcomeScreen
 │   ├── landing/           # LandingPage, Hero, Features, Footer
 │   ├── modals/            # AddFriendModal, RequestsModal, ConfirmModal
-│   ├── navigation/        # NavStrip, ProfileMenu
-│   └── sidebar/           # Sidebar, UserItem, SearchBar
+│   └── sidebar/           # Sidebar, UserItem, SearchBar, ProfileMenu
 │
 ├── context/               # React Context for global state
 │   ├── AuthContext.jsx       → User auth state & JWT token
