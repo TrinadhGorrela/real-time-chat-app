@@ -1,0 +1,341 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(11, 20, 26, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow:
+    0 17px 50px 0 rgba(11, 20, 26, 0.19),
+    0 12px 15px 0 rgba(11, 20, 26, 0.24);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalPop 0.3s ease-out;
+}
+
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 24px;
+  border-bottom: 1px solid #f0f2f5;
+  background: #00a884;
+  color: white;
+}
+
+.modalHeader h2 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.closeBtn:hover {
+  opacity: 0.8;
+}
+
+.modalBody {
+  padding: 24px;
+}
+
+.profileSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.avatarContainer {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e9edef;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nameDisplayGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userName {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #111b21;
+  margin: 0;
+}
+
+.editNameBtn {
+  background: none;
+  border: none;
+  color: #8696a0;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.editNameBtn:hover {
+  color: #00a884;
+}
+
+.nameEditGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.nameInput {
+  padding: 6px 10px;
+  border: 1px solid #00a884;
+  border-radius: 6px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #111b21;
+  outline: none;
+  font-family: inherit;
+  width: 100%;
+  max-width: 200px;
+}
+
+.saveNameBtn,
+.cancelNameBtn {
+  background: white;
+  border: 1px solid #d1d7db;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.saveNameBtn {
+  color: #00a884;
+}
+
+.saveNameBtn:hover:not(:disabled) {
+  background: #f0fdf4;
+  border-color: #00a884;
+}
+
+.cancelNameBtn {
+  color: #ef4444;
+}
+
+.cancelNameBtn:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.saveNameBtn:disabled,
+.cancelNameBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.userEmail {
+  font-size: 0.95rem;
+  color: #54656f;
+  margin: 0;
+}
+
+.divider {
+  height: 1px;
+  background: #f0f2f5;
+  margin: 20px 0;
+}
+
+.securitySection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #111b21;
+  margin: 0;
+}
+
+.passwordForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 0.9rem;
+  color: #54656f;
+  font-weight: 500;
+}
+
+.formGroup input {
+  padding: 12px 16px;
+  border: 1px solid #d1d7db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.formGroup input:focus {
+  border-color: #00a884;
+}
+
+.updateBtn {
+  background: #00a884;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 10px;
+  font-family: inherit;
+}
+
+.updateBtn:hover:not(:disabled) {
+  background: #008f6f;
+}
+
+.updateBtn:disabled {
+  background: #8696a0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.statusMessage {
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.statusMessage.error {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+}
+
+.statusMessage.success {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.openFormBtn {
+  background: #f0f2f5;
+  color: #111b21;
+  border: 1px solid #d1d7db;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  width: 100%;
+}
+
+.openFormBtn:hover {
+  background: #e9edef;
+}
+
+.formActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.formActions button {
+  flex: 1;
+  margin-top: 0;
+}
+
+.cancelBtn {
+  background: white;
+  color: #54656f;
+  border: 1px solid #d1d7db;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  font-family: inherit;
+}
+
+.cancelBtn:hover {
+  background: #f0f2f5;
+  color: #111b21;
+}

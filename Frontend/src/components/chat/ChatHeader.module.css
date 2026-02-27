@@ -132,22 +132,30 @@
   background: #f0f2f5;
 }
 
-.actionItem.danger {
-  color: #ef4444;
+.actionItem.delete {
+  color: #54656f;
 }
 
-.actionItem.danger:hover {
-  background: #fef2f2;
+.actionItem.delete:hover {
+  background: #f0f2f5;
+}
+
+.actionItem.clear {
+  color: #54656f;
+}
+
+.actionItem.clear:hover {
+  background: #f0f2f5;
 }
 
 .backBtn {
   display: block;
   background: none;
   border: none;
-  color: #54656f; 
+  color: #54656f;
   font-size: 1.3rem;
   cursor: pointer;
-  padding: 8px 12px 8px 0; 
+  padding: 8px 12px 8px 0;
   flex-shrink: 0;
   transition: color 0.2s;
 }

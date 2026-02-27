@@ -1,47 +1,54 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import authService from '../../services/authService';
-import styles from './Register.module.css';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import authService from "../../services/authService";
+import styles from "./Register.module.css";
 
 const Register = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match!');
+      setError("Passwords do not match!");
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError("Password must be at least 6 characters");
       return;
     }
 
     setLoading(true);
     try {
       const fullName = `${firstName.trim()} ${lastName.trim()}`;
-      const newUser = await authService.register(fullName, email.trim(), password);
-      login({ token: null, user: { email: newUser.email, name: newUser.name } });
+      const newUser = await authService.register(
+        fullName,
+        email.trim(),
+        password,
+      );
+      login({
+        token: null,
+        user: { email: newUser.email, name: newUser.name },
+      });
 
       // Get a real token by logging in
       const loginData = await authService.login(email.trim(), password);
       login(loginData);
-      navigate('/chat');
+      navigate("/chat");
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -55,8 +62,6 @@ const Register = () => {
         </div>
         <h2>Create Account</h2>
         <p className={styles.subtitle}>Join our community today</p>
-
-        {error && <div className={`${styles.alert} ${styles.error}`}>{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className={styles.nameRow}>
@@ -99,7 +104,7 @@ const Register = () => {
           <div className={styles.inputGroup}>
             <i className="fa-solid fa-lock"></i>
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               className={styles.formControl}
               placeholder="Password"
               value={password}
@@ -108,7 +113,7 @@ const Register = () => {
               minLength={6}
             />
             <i
-              className={`fa-regular ${showPassword ? 'fa-eye-slash' : 'fa-eye'} ${styles.togglePassword}`}
+              className={`fa-regular ${showPassword ? "fa-eye-slash" : "fa-eye"} ${styles.togglePassword}`}
               onClick={() => setShowPassword(!showPassword)}
             ></i>
           </div>
@@ -116,7 +121,7 @@ const Register = () => {
           <div className={styles.inputGroup}>
             <i className="fa-solid fa-lock"></i>
             <input
-              type={showConfirm ? 'text' : 'password'}
+              type={showConfirm ? "text" : "password"}
               className={styles.formControl}
               placeholder="Confirm Password"
               value={confirmPassword}
@@ -124,13 +129,25 @@ const Register = () => {
               required
             />
             <i
-              className={`fa-regular ${showConfirm ? 'fa-eye-slash' : 'fa-eye'} ${styles.togglePassword}`}
+              className={`fa-regular ${showConfirm ? "fa-eye-slash" : "fa-eye"} ${styles.togglePassword}`}
               onClick={() => setShowConfirm(!showConfirm)}
             ></i>
           </div>
 
-          <button type="submit" className={styles.btnPrimary} disabled={loading}>
-            {loading ? <i className="fa-solid fa-spinner fa-spin"></i> : 'Sign Up'}
+          {error && (
+            <div className={`${styles.alert} ${styles.error}`}>{error}</div>
+          )}
+
+          <button
+            type="submit"
+            className={styles.btnPrimary}
+            disabled={loading}
+          >
+            {loading ? (
+              <i className="fa-solid fa-spinner fa-spin"></i>
+            ) : (
+              "Sign Up"
+            )}
           </button>
 
           <div className={styles.loginLink}>

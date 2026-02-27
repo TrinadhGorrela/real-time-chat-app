@@ -69,7 +69,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOriginPatterns(
                 Arrays.asList("http://localhost:3000", "http://localhost:8081", "https://localhost:3000",
-                        "https://localhost:8081", "http://localhost:5173", "https://localhost:5173", "*"));
+                        "https://localhost:8081", "http://localhost:5173", "https://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

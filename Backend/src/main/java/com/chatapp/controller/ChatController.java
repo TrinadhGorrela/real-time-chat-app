@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -95,28 +96,12 @@ public class ChatController {
     @Autowired
     private com.chatapp.service.FilesStorageService filesStorageService;
 
-    // ============================================
-    // 4. DELETE MESSAGE (REST API)
-    // ============================================
     @DeleteMapping("/chatapp/message/{id}")
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
         return messageRepo.findById(id).map(message -> {
             // Delete file if exists
             if (message.getFileUrl() != null && !message.getFileUrl().isEmpty()) {
                 String filename = message.getFileName();
-                // However, fileUrl usually looks like "/files/timestamp_uuid.ext"
-                // and fileName is just the original name usually?
-                // Let's check save method in FilesStorageService.
-                // It returns "/files/" + filename.
-                // We need to extract the actual stored filename from the URL or store it
-                // separately.
-
-                // Actually, looking at FileController (not shown here but assumed), usually we
-                // serve via /files/{filename}.
-                // The Message entity saves fileUrl.
-                // Let's assume fileUrl is like "http://.../files/xyz.jpg" or "/files/xyz.jpg".
-                // We need to extract "xyz.jpg".
-
                 String fileUrl = message.getFileUrl();
                 String storedFilename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
                 filesStorageService.delete(storedFilename);
@@ -141,6 +126,28 @@ public class ChatController {
                 Map.of(
                         "sender", sender.toLowerCase(),
                         "isTyping", "true".equals(isTyping)));
+    }
+
+    // ============================================
+    // 6. CLEAR CHAT (REST API)
+    // ============================================
+    @PostMapping("/chatapp/clear-chat")
+    public ResponseEntity<?> clearChat(@RequestBody Map<String, String> request, Principal principal) {
+        String myEmail = principal.getName();
+        String friendEmail = request.get("friend");
+
+        if (friendEmail == null || friendEmail.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Friend email required"));
+        }
+
+        try {
+            messageRepo.deleteConversation(myEmail, friendEmail);
+            System.out.println("Purged conversation history between: " + myEmail + " and " + friendEmail);
+            return ResponseEntity.ok(Map.of("message", "Chat cleared successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(Map.of("message", "Error clearing chat", "error", e.getMessage()));
+        }
     }
 
 }

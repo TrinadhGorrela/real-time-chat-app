@@ -10,12 +10,12 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.0.0",
+    "axios": "^1.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
-    "@stomp/stompjs": "^7.0.0",
-    "sockjs-client": "^1.6.1",
-    "axios": "^1.6.5"
+    "sockjs-client": "^1.6.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.48",

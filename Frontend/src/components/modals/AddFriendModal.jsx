@@ -12,12 +12,9 @@ const AddFriendModal = ({ onClose, onSuccess }) => {
     setError("");
     setLoading(true);
     try {
-      const result = await friendService.sendFriendRequest(
-        email.trim().toLowerCase(),
-      );
-      alert(result.message || "Friend request sent!");
-      onSuccess();
-      onClose();
+      await friendService.sendFriendRequest(email.trim().toLowerCase());
+      if (onSuccess) onSuccess();
+      setEmail("");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send friend request");
     } finally {

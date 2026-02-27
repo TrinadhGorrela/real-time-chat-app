@@ -3,21 +3,23 @@
 A full-stack real-time chat application built with React and Spring Boot, featuring WebSocket messaging, JWT authentication, friend management, and file sharing.
 
 ## Table of Contents
-|                Section                  |               Description               |
-|-----------------------------------------|-----------------------------------------|
-| [Features](#-features)                  | Real-time messaging, Auth, File Sharing |
-| [Tech Stack](#-tech-stack)              | React, Spring Boot, WebSocket, MySQL    |
-| [Architecture](#-architecture)          | System design & Data flow diagrams      |
-| [Structure](#-project-structure)        | Codebase organization & modules         |
-| [Getting Started](#-getting-started)    | Setup guide for Backend & Frontend      |
-| [API Docs](#-api-documentation)         | REST Endpoints & Usage                  |
-| [WebSocket](#-websocket-events)         | Real-time event payloads & topics       |
-| [Screenshots](#-screenshots)            | App preview on Desktop & Mobile         |
-| [Contributing](#-contributing)          | Guidelines for contributing             |
+
+| Section                              | Description                             |
+| ------------------------------------ | --------------------------------------- |
+| [Features](#-features)               | Real-time messaging, Auth, File Sharing |
+| [Tech Stack](#-tech-stack)           | React, Spring Boot, WebSocket, MySQL    |
+| [Architecture](#-architecture)       | System design & Data flow diagrams      |
+| [Structure](#-project-structure)     | Codebase organization & modules         |
+| [Getting Started](#-getting-started) | Setup guide for Backend & Frontend      |
+| [API Docs](#-api-documentation)      | REST Endpoints & Usage                  |
+| [WebSocket](#-websocket-events)      | Real-time event payloads & topics       |
+| [Screenshots](#-screenshots)         | App preview on Desktop & Mobile         |
+| [Contributing](#-contributing)       | Guidelines for contributing             |
 
 ## Features
 
 ### Core Functionality
+
 - **JWT Authentication** - Secure login/registration with token-based auth
 - **Real-Time Messaging** - Instant message delivery via WebSocket (STOMP)
 - **Friend Management** - Send/accept/decline friend requests
@@ -34,8 +36,9 @@ A full-stack real-time chat application built with React and Spring Boot, featur
 ## Tech Stack
 
 ### Frontend
-|     Technology      |             Purpose                 |
-|---------------------|-------------------------------------|
+
+| Technology          | Purpose                             |
+| ------------------- | ----------------------------------- |
 | **React 18**        | UI framework with hooks and context |
 | **React Router v6** | Client-side routing                 |
 | **Vite**            | Build tool and dev server           |
@@ -45,19 +48,21 @@ A full-stack real-time chat application built with React and Spring Boot, featur
 | **SockJS Client**   | WebSocket fallback support          |
 
 ### Backend
-|      Technology     |            Purpose                 |
-|---------------------|------------------------------------|
-| **Spring Boot 3.x** | Java application framework         |
-| **Spring WebSocket**| WebSocket support with STOMP       |
-| **Spring Security** | JWT authentication & authorization |
-| **Spring Data JPA** | Database ORM                       |
-| **MySQL**           | Primary database                   |
-| **Lombok**          | Boilerplate reduction              |
-| **Jackson**         | JSON serialization                 |
+
+| Technology           | Purpose                            |
+| -------------------- | ---------------------------------- |
+| **Spring Boot 3.x**  | Java application framework         |
+| **Spring WebSocket** | WebSocket support with STOMP       |
+| **Spring Security**  | JWT authentication & authorization |
+| **Spring Data JPA**  | Database ORM                       |
+| **MySQL**            | Primary database                   |
+| **Lombok**           | Boilerplate reduction              |
+| **Jackson**          | JSON serialization                 |
 
 ## Architecture
 
 ### System Architecture
+
 ```mermaid
 graph TD
     Client[Client Browser - React App]
@@ -72,119 +77,145 @@ graph TD
 ```
 
 ### Frontend Architecture
+
 ```text
 src/
 ├── components/
-│   ├── auth/              # Login, Register, PrivateRoute
-│   ├── chat/              # ChatApp, ChatArea, ChatHeader, MessageBubble, MessageInput
-│   ├── sidebar/           # Sidebar, UserItem, SearchBar
-│   ├── navigation/        # NavStrip, ProfileMenu
-│   ├── modals/            # AddFriendModal, RequestsModal, ConfirmModal
-│   ├── common/            # Toast, DateHeader, WelcomeScreen
-│   └── landing/           # LandingPage, Hero, Features, Footer
+│   ├── auth/              # Login, Register pages
+│   │   ├── Login.jsx         → Email/password login form with JWT auth
+│   │   └── Register.jsx      → New user registration form
+│   ├── chat/              # Core chat interface components
+│   │   ├── ChatApp.jsx       → Root chat layout, contact list & chat panel
+│   │   ├── ChatArea.jsx      → Scrollable message history container
+│   │   ├── ChatHeader.jsx    → Contact name, status & action menu (kebab)
+│   │   ├── CustomAudioPlayer.jsx → In-chat audio message player
+│   │   ├── DateHeader.jsx    → Date divider between message groups
+│   │   ├── MessageBubble.jsx → Individual message with timestamp & read status
+│   │   ├── MessageInput.jsx  → Text input bar with file attachment & send
+│   │   └── WelcomeScreen.jsx → Placeholder shown when no chat is selected
+│   ├── common/            # Shared utility components
+│   │   ├── PrivateRoute.jsx  → Route guard that redirects unauthenticated users
+│   │   └── Toast.jsx         → Dismissible notification/toast popup
+│   ├── landing/           # Public marketing pages
+│   │   ├── LandingPage.jsx   → Root landing page wrapper
+│   │   ├── Hero.jsx          → Hero section with headline & CTA
+│   │   ├── Features.jsx      → Feature cards grid
+│   │   ├── Footer.jsx        → Page footer with links
+│   │   └── Navbar.jsx        → Top navigation bar with login/register links
+│   ├── modals/            # Overlay modal dialogs
+│   │   ├── AddFriendModal.jsx   → Email input to send a friend request
+│   │   ├── ConfirmModal.jsx     → Generic confirm/cancel dialog (used for clear chat)
+│   │   ├── LogoutModal.jsx      → Logout confirmation dialog
+│   │   ├── MediaModal.jsx       → Full-screen media/image viewer
+│   │   ├── RequestsModal.jsx    → Incoming friend requests list
+│   │   └── SettingsModal.jsx    → User profile & password update
+│   └── sidebar/           # Contact list sidebar
+│       ├── Sidebar.jsx       → Full sidebar with contacts & hamburger menu
+│       ├── SearchBar.jsx     → Contact search input
+│       └── UserItem.jsx      → Single contact row with avatar & last message
 │
 ├── context/               # React Context for global state
 │   ├── AuthContext.jsx       → User auth state & JWT token
-│   ├── WebSocketContext.jsx  → STOMP connection & subscriptions
-│   └── ChatContext.jsx       → Chat-specific shared state
+│   ├── ChatContext.jsx       → Chat-specific shared state
+│   └── WebSocketContext.jsx  → STOMP connection & subscriptions
 │
 ├── services/              # API service layer (Axios)
 │   ├── api.js                → Axios instance with JWT interceptor
 │   ├── authService.js        → Login, register, status endpoints
-│   ├── chatService.js        → Message CRUD operations
-│   ├── friendService.js      → Friend requests & contacts
-│   └── fileService.js        → File upload handling
+│   ├── chatService.js        → Message CRUD & clear chat operations
+│   ├── fileService.js        → File upload handling
+│   └── friendService.js      → Friend requests & contacts
 │
 ├── utils/
+│   ├── constants.js          → App-wide constants
 │   ├── dateFormatter.js      → Format timestamps (Today/Yesterday/Time)
-│   ├── fileHelpers.js        → File type detection, size formatting
-│   └── constants.js          → App-wide constants
+│   └── fileHelpers.js        → File type detection, size formatting
 │
 └── App.jsx                # Root component with routing
 ```
 
 ### Backend Architecture
+
 ```text
 src/main/java/com/chatapp/
+├── config/
+│   ├── SecurityConfig.java       → JWT filter chain, CORS & stateless session config
+│   └── WebSocketConfig.java      → STOMP broker endpoint & allowed origins setup
+│
 ├── controller/
-│   ├── AuthController.java        → /chatapp/adduser, /validateuser, /status/*
-│   ├── ChatController.java        → /chatapp/messages, /chatapp/history
-│   ├── FriendController.java      → /chatapp/friends/*
-│   ├── FileController.java        → /files/upload, /files/download
-│   └── WebSocketController.java   → @MessageMapping endpoints
-│
-├── service/
-│   ├── AuthService.java           → JWT generation, user validation
-│   ├── ChatService.java           → Message persistence & retrieval
-│   ├── FriendService.java         → Friend request logic
-│   ├── FileService.java           → File storage handling
-│   └── StatusService.java         → Online/offline tracking
-│
-├── repository/
-│   ├── UserRepository.java
-│   ├── MessageRepository.java
-│   └── FriendRequestRepository.java
+│   ├── ChatController.java       → WebSocket message handling & chat REST endpoints
+│   ├── FileController.java       → File upload & static file serving endpoints
+│   └── UserController.java       → Auth, friend management & user settings endpoints
 │
 ├── entity/
-│   ├── User.java                  → @Entity with JPA annotations
-│   ├── Message.java
-│   └── FriendRequest.java
+│   ├── Friendship.java           → JPA entity for friend relationships & status
+│   ├── Message.java              → JPA entity for chat messages with file support
+│   └── User.java                 → JPA entity for user profiles & online status
 │
-├── config/
-│   ├── WebSocketConfig.java      → STOMP endpoint setup
-│   ├── SecurityConfig.java       → JWT filter, CORS config
-│   └── JwtUtil.java              → Token generation/validation
+├── repository/
+│   ├── FriendshipRepository.java → JPA queries for friend lookups & status filters
+│   ├── MessageRepo.java          → JPA queries for conversation history & unread counts
+│   └── UserRepository.java       → JPA queries for user lookup by email
 │
-└── dto/                           → Data Transfer Objects
-    ├── LoginRequest.java
-    ├── MessageDTO.java
-    └── FriendRequestDTO.java
+├── security/
+│   ├── JwtAuthFilter.java        → Intercepts requests & validates Bearer JWT token
+│   └── JwtUtil.java              → Token generation, parsing & validation
+│
+├── service/
+│   ├── FilesStorageService.java  → Handles file save, retrieval & deletion on disk
+│   └── UserDetailsServiceImpl.java → Loads user by email for Spring Security auth
+│
+└── ChatApplication.java          → Spring Boot entry point (@SpringBootApplication)
 ```
 
 ## Project Structure
 
 ```text
 chatapp/
-├── frontend/                      # React application
+├── frontend/                     # React application
 │   ├── public/
-│   │   ├── image/                # Static assets (logo, avatars)
-│   │   └── audio/                # Notification sounds
+│   │   ├── audio/                # Notification sounds
+│   │   └── image/                # Static assets (logo, avatars)
 │   ├── src/
 │   │   ├── components/           # React components
 │   │   ├── context/              # Global state management
 │   │   ├── services/             # API service layer
 │   │   ├── utils/                # Helper functions
 │   │   ├── App.jsx               # Root component
+│   │   ├── App.css               # Root component styles
 │   │   ├── main.jsx              # React entry point
 │   │   └── index.css             # Global styles
 │   ├── package.json
 │   ├── vite.config.js            # Vite configuration + proxy
 │   └── index.html
 │
-└── backend/                       # Spring Boot application
+└── backend/                              # Spring Boot application
     ├── src/main/java/com/chatapp/
-    │   ├── controller/           # REST & WebSocket controllers
-    │   ├── service/              # Business logic
-    │   ├── repository/           # JPA repositories
-    │   ├── entity/               # Database entities
-    │   ├── config/               # Security, WebSocket, CORS config
-    │   └── dto/                  # Data Transfer Objects
+    │   ├── config/                       # Security, WebSocket, CORS config
+    │   ├── controller/                   # REST & WebSocket controllers
+    │   ├── entity/                       # Database entities
+    │   ├── repository/                   # JPA repositories
+    │   ├── security                      # Jwt security
+    │   ├── service/                      # Business logic
+    │   └── ChatAppApplication.java       # Spring Boot main class
     ├── src/main/resources/
-    │   ├── application.properties    # DB config, JWT secret, server port
-    │   └── static/                   # Uploaded files storage
-    ├── pom.xml                       # Maven dependencies
-    └── ChatAppApplication.java      # Spring Boot main class
+    │   ├── application.properties        # DB config, JWT secret, server port
+    ├── uploads/                          # Uploaded files storage
+    └──pom.xml                            # Maven dependencies
+    └──
 ```
 
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+ and npm
 - Java 17+
 - MySQL 8.0+
 - Maven 3.8+
 
 ### Backend Setup
+
 1. Clone the repository:
    ```bash
    git clone <your-repo-url>
@@ -195,6 +226,7 @@ chatapp/
    CREATE DATABASE chatapp;
    ```
 3. Configure `application.properties`:
+
    ```properties
    # Database
    spring.datasource.url=jdbc:mysql://localhost:3306/chatapp
@@ -213,6 +245,7 @@ chatapp/
    # Server
    server.port=8081
    ```
+
 4. Build and run:
    ```bash
    mvn clean install
@@ -221,6 +254,7 @@ chatapp/
    Backend runs on `http://localhost:8081`
 
 ### Frontend Setup
+
 1. Navigate to frontend:
    ```bash
    cd ../frontend
@@ -238,72 +272,103 @@ chatapp/
 ## API Documentation
 
 ### Authentication Endpoints
-| Method | Endpoint                        | Description         | Auth Required |
-|--------|---------------------------------|---------------------|---------------|
-| POST   | `/chatapp/adduser`              | Register new user   | No            |
-| POST   | `/chatapp/validateuser`         | Login user          | No            |
-| POST   | `/chatapp/status/online`        | Mark user online    | Yes           |
-| POST   | `/chatapp/status/offline`       | Mark user offline   | Yes           |
-| GET    | `/chatapp/status/check/{email}` | Get user status     | Yes           |
+
+| Method | Endpoint                        | Description                        | Auth Required |
+| ------ | ------------------------------- | ---------------------------------- | ------------- |
+| POST   | `/chatapp/adduser`              | Register new user                  | No            |
+| POST   | `/chatapp/validateuser`         | Login user                         | No            |
+| GET    | `/chatapp/status/check/{email}` | Get user online status & last seen | Yes           |
+| POST   | `/chatapp/update-password`      | Update account password            | Yes           |
+| POST   | `/chatapp/update-name`          | Update display name                | Yes           |
 
 ### Chat Endpoints
-| Method | Endpoint                                | Description      | Auth Required |
-|--------|-----------------------------------------|------------------|---------------|
-| GET    | `/chatapp/messages/{sender}/{receiver}` | Get chat history | Yes           |
-| DELETE | `/chatapp/messages/{id}`                | Delete message   | Yes           |
+
+| Method | Endpoint                            | Description             | Auth Required |
+| ------ | ----------------------------------- | ----------------------- | ------------- |
+| GET    | `/chatapp/messages/{user1}/{user2}` | Get chat history        | Yes           |
+| DELETE | `/chatapp/message/{id}`             | Delete a message        | Yes           |
+| POST   | `/chatapp/clear-chat`               | Clear full conversation | Yes           |
 
 ### Friend Endpoints
-| Method | Endpoint                             | Description            | Auth Required |
-|--------|--------------------------------------|------------------------|---------------|
-| POST   | `/chatapp/friends/request`           | Send friend request    | Yes           |
-| GET    | `/chatapp/friends/requests/pending`  | Get pending requests   | Yes           |
-| POST   | `/chatapp/friends/accept`            | Accept friend request  | Yes           |
-| POST   | `/chatapp/friends/decline`           | Decline friend request | Yes           |
-| GET    | `/chatapp/friends/contacts`          | Get friend list        | Yes           |
-| DELETE | `/chatapp/friends/{email}`           | Delete friend          | Yes           |
+
+| Method | Endpoint                  | Description            | Auth Required |
+| ------ | ------------------------- | ---------------------- | ------------- |
+| POST   | `/chatapp/request`        | Send friend request    | Yes           |
+| GET    | `/chatapp/requests`       | Get pending requests   | Yes           |
+| POST   | `/chatapp/accept`         | Accept friend request  | Yes           |
+| POST   | `/chatapp/decline`        | Decline friend request | Yes           |
+| GET    | `/chatapp/mycontacts`     | Get contact list       | Yes           |
+| POST   | `/chatapp/delete-contact` | Remove a contact       | Yes           |
 
 ### File Endpoints
-| Method |          Endpoint              | Description   | Auth Required |
-|--------|--------------------------------|---------------|---------------|
-| POST   | `/files/upload`                | Upload file   | Yes           |
-| GET    | `/files/download/{filename}`   | Download file | Yes           |
+
+| Method | Endpoint                     | Description   | Auth Required |
+| ------ | ---------------------------- | ------------- | ------------- |
+| POST   | `/files/upload`              | Upload file   | Yes           |
+| GET    | `/files/download/{filename}` | Download file | Yes           |
 
 ## WebSocket Events
 
 ### Client → Server
-| Destination             |          Payload               | Description          |
-|-------------------------|--------------------------------|----------------------|
-| `/app/chat`             | `MessageDTO`                   | Send a message       |
-| `/app/chat.typing`      | `{sender, receiver, isTyping}` | Typing indicator     |
-| `/app/chat.readMessage` | `{sender, receiver, status}`   | Read receipt         |
+
+| Destination             | Payload                        | Description      |
+| ----------------------- | ------------------------------ | ---------------- |
+| `/app/chat`             | `MessageDTO`                   | Send a message   |
+| `/app/chat.typing`      | `{sender, receiver, isTyping}` | Typing indicator |
+| `/app/chat.readMessage` | `{sender, receiver, status}`   | Read receipt     |
 
 ### Server → Client
-|         Topic                 |          Payload              | Description                 |
-|-------------------------------|-------------------------------|-----------------------------|
-| `/topic/private/{email}`      | `MessageDTO`                  | Incoming messages           |
-| `/topic/typing/{email}`       | `{sender, isTyping}`          | Typing status               |
-| `/topic/status`               | `{email, isOnline, lastSeen}` | Online status               |
-| `/user/queue/read-receipts`   | `{id, status}`                | Read receipt acknowledgment |
+
+| Topic                       | Payload                       | Description                 |
+| --------------------------- | ----------------------------- | --------------------------- |
+| `/topic/private/{email}`    | `MessageDTO`                  | Incoming messages           |
+| `/topic/typing/{email}`     | `{sender, isTyping}`          | Typing status               |
+| `/topic/status`             | `{email, isOnline, lastSeen}` | Online status               |
+| `/user/queue/read-receipts` | `{id, status}`                | Read receipt acknowledgment |
 
 ## Screenshots
 
-### Home
+### Home Page
+
 <p float="left">
-  <img src="/Screenshots/Home Page.png" width="45%" />
+  <img src="Screenshots/Home Page.png" width="70%" />
+</p>
+
+### Features
+
+<p float="left">
+  <img src="Screenshots/Features.png" width="70%" />
 </p>
 
 ### Login & Register
+
 <p float="left">
-  <img src="/Screenshots/Login Page.png" width="45%" />
-  <img src="/Screenshots/Register Page.png" width="45%" /> 
+  <img src="Screenshots/Login Page.png" width="45%" />
+  <img src="Screenshots/Register Page.png" width="45%" />
 </p>
 
 ### Chat Interface
+
 <p float="left">
-  <img src="/Screenshots/Chat Area.png" width="45%" />
+  <img src="Screenshots/Chat Home.png" width="45%" />
+  <img src="Screenshots/Chat Area.png" width="45%" />
 </p>
 
-##  Contributing
+### Chat Options
+
+<p float="left">
+  <img src="Screenshots/Chat Options.png" width="70%" />
+</p>
+
+### Modals
+
+<p float="left">
+  <img src="Screenshots/Add Friend Modal.png" width="45%" />
+  <img src="Screenshots/Settings Modal.png" width="45%" />
+</p>
+
+## Contributing
+
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit changes (`git commit -m 'Add amazing feature'`)
@@ -313,7 +378,7 @@ chatapp/
 ## Author
 
 **Siva Satya Trinadh Gorrela**
+
 - **Email:** [trinadh.gorrela2004@gmail.com](mailto:trinadh.gorrela2004@gmail.com)
 - **LinkedIn:** [Siva Satya Trinadh Gorrela](https://www.linkedin.com/in/trinadhgorrela/)
 - **GitHub:** [@TrinadhGorrela](https://github.com/TrinadhGorrela)
-
