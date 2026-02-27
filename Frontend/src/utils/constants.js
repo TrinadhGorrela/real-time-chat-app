@@ -24,7 +24,7 @@ export const ALLOWED_EXTENSIONS = [
   "docx",
   "txt",
 ];
-export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
 export const WS_TOPICS = {
   privateMessage: (email) => `/topic/private/${email.toLowerCase()}`,
@@ -37,7 +37,6 @@ export const WS_DESTINATIONS = {
   chat: "/app/chat",
   typing: "/app/chat.typing",
   readMessage: "/app/chat.readMessage",
-  statusUpdate: "/app/status.update",
 };
 
 export const MESSAGE_TYPES = {

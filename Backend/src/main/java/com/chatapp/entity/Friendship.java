@@ -10,7 +10,7 @@ public class Friendship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String userEmail; 
-    private String friendEmail; 
+    private String userEmail;
+    private String friendEmail;
     private String status;
 }
