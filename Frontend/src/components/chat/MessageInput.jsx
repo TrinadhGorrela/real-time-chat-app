@@ -15,10 +15,23 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
   const MAX_SIZE = 70 * 1024 * 1024;
 
   useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
+    if (!selectedFile) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    if (
+      selectedFile.type.startsWith("image/") ||
+      selectedFile.type.startsWith("video/") ||
+      selectedFile.type.startsWith("audio/")
+    ) {
+      const url = URL.createObjectURL(selectedFile);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreviewUrl(null);
+    }
+  }, [selectedFile]);
 
   const handleSend = () => {
     if (text.trim() && !uploading) {
@@ -52,15 +65,6 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
     }
 
     setSelectedFile(file);
-    if (
-      file.type.startsWith("image/") ||
-      file.type.startsWith("video/") ||
-      file.type.startsWith("audio/")
-    ) {
-      setPreviewUrl(URL.createObjectURL(file));
-    } else {
-      setPreviewUrl(null);
-    }
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -144,7 +148,7 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
                 </video>
               ) : selectedFile?.type.startsWith("audio/") ? (
                 <div className={styles.audioPreview}>
-                   <CustomAudioPlayer src={previewUrl} />
+                  <CustomAudioPlayer src={previewUrl} />
                 </div>
               ) : (
                 <img

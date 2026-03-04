@@ -10,17 +10,17 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/chatapp": {
-        target: "https://localhost:8081",
+        target: "http://localhost:8081",
         changeOrigin: true,
         secure: false,
       },
       "/files": {
-        target: "https://localhost:8081",
+        target: "http://localhost:8081",
         changeOrigin: true,
         secure: false,
       },
       "/ws": {
-        target: "https://localhost:8081",
+        target: "http://localhost:8081",
         changeOrigin: true,
         ws: true,
         secure: false,
