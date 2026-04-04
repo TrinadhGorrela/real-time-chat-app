@@ -1,6 +1,3 @@
-export const API_BASE_URL = "http://localhost:8081";
-export const WS_URL = "http://localhost:8081/ws";
-
 export const COLORS = {
   teal: "#00a884",
   darkTeal: "#008f6f",

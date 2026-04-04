@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { formatMessageTime } from "../../utils/dateFormatter";
-import { formatFileSize, escapeHtml } from "../../utils/fileHelpers";
+import { formatters } from "../../utils/dateFormatter";
+import { formatFileSize, escapeHtml, getFileIconClass, getFileIconColor } from "../../utils/fileHelpers";
 import styles from "./MessageBubble.module.css";
 import CustomAudioPlayer from "./CustomAudioPlayer";
 
@@ -11,7 +11,7 @@ const MessageBubble = ({
   onMediaClick,
   onMediaLoaded,
 }) => {
-  const timeStr = formatMessageTime(message.timestamp);
+  const timeStr = formatters.messageTime(message.timestamp);
   const isRead = message.status === "READ";
 
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -109,10 +109,10 @@ const MessageBubble = ({
         >
           <div className={styles.fileIcon}>
             <i
-              className={getIconClass(message.fileName)}
+              className={getFileIconClass(message.fileName)}
               style={{
                 fontSize: "24px",
-                color: getIconColor(message.fileName),
+                color: getFileIconColor(message.fileName),
               }}
             ></i>
           </div>
@@ -186,30 +186,6 @@ const MessageBubble = ({
       </div>
     </div>
   );
-};
-
-const getIconClass = (fileName) => {
-  if (!fileName) return "fa-solid fa-file";
-  const ext = fileName.split(".").pop().toLowerCase();
-  if (["pdf"].includes(ext)) return "fa-solid fa-file-pdf";
-  if (["doc", "docx"].includes(ext)) return "fa-solid fa-file-word";
-  if (["xls", "xlsx"].includes(ext)) return "fa-solid fa-file-excel";
-  if (["ppt", "pptx"].includes(ext)) return "fa-solid fa-file-powerpoint";
-  if (["txt"].includes(ext)) return "fa-solid fa-file-lines";
-  if (["mp3", "wav"].includes(ext)) return "fa-solid fa-file-audio";
-  return "fa-solid fa-file";
-};
-
-const getIconColor = (fileName) => {
-  if (!fileName) return "#666";
-  const ext = fileName.split(".").pop().toLowerCase();
-  if (["pdf"].includes(ext)) return "#d32f2f";
-  if (["doc", "docx"].includes(ext)) return "#2b579a";
-  if (["xls", "xlsx"].includes(ext)) return "#217346";
-  if (["ppt", "pptx"].includes(ext)) return "#d24726";
-  if (["txt"].includes(ext)) return "#666";
-  if (["mp3", "wav"].includes(ext)) return "#a020f0";
-  return "#666";
 };
 
 export default MessageBubble;

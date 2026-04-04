@@ -1,6 +1,6 @@
 import UserItem from "./UserItem";
 import SearchBar from "./SearchBar";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import styles from "./Sidebar.module.css";
 
 const Sidebar = ({
@@ -39,17 +39,18 @@ const Sidebar = ({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [showMenu]);
 
-  const filtered = contacts
-    .filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => {
-      if (a.lastMessageTime && b.lastMessageTime) {
-        return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
-      }
-      if (a.lastMessageTime && !b.lastMessageTime) return -1;
-      if (!a.lastMessageTime && b.lastMessageTime) return 1;
-
-      return a.name.localeCompare(b.name);
-    });
+  const filtered = useMemo(() => {
+    return contacts
+      .filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
+      .sort((a, b) => {
+        if (a.lastMessageTime && b.lastMessageTime) {
+          return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
+        }
+        if (a.lastMessageTime) return -1;
+        if (b.lastMessageTime) return 1;
+        return a.name.localeCompare(b.name);
+      });
+  }, [contacts, search]);
 
   return (
     <aside className={styles.sidebar}>

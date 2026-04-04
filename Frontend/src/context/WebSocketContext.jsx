@@ -11,8 +11,20 @@ export const WebSocketProvider = ({ children }) => {
   const clientRef = useRef(null);
   const { user, token } = useAuth();
 
+  const disconnect = () => {
+    if (clientRef.current) {
+      clientRef.current.deactivate();
+      clientRef.current = null;
+      setStompClient(null);
+      setConnected(false);
+    }
+  };
+
   useEffect(() => {
-    if (!user || !token) return;
+    if (!user || !token) {
+      disconnect();
+      return;
+    }
 
     const socket = new SockJS(import.meta.env.VITE_WS_URL);
     const client = new Client({
@@ -61,7 +73,7 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
-  const value = { stompClient, connected, subscribe, send };
+  const value = { stompClient, connected, subscribe, send, disconnect };
 
   return (
     <WebSocketContext.Provider value={value}>

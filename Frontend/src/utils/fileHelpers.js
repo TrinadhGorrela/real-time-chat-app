@@ -6,36 +6,48 @@ export const formatFileSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
-export const getFileIcon = (fileName) => {
-  if (!fileName) return "fa-file";
+export const getFileIconClass = (fileName) => {
+  if (!fileName) return "fa-solid fa-file";
   const ext = fileName.split(".").pop().toLowerCase();
-  const icons = {
-    pdf: "fa-file-pdf",
-    doc: "fa-file-word",
-    docx: "fa-file-word",
-    txt: "fa-file-lines",
-    jpg: "fa-file-image",
-    jpeg: "fa-file-image",
-    png: "fa-file-image",
-    gif: "fa-file-image",
+  const iconMap = {
+    pdf: "fa-solid fa-file-pdf",
+    doc: "fa-solid fa-file-word",
+    docx: "fa-solid fa-file-word",
+    xls: "fa-solid fa-file-excel",
+    xlsx: "fa-solid fa-file-excel",
+    ppt: "fa-solid fa-file-powerpoint",
+    pptx: "fa-solid fa-file-powerpoint",
+    txt: "fa-solid fa-file-lines",
+    mp3: "fa-solid fa-file-audio",
+    wav: "fa-solid fa-file-audio",
+    jpg: "fa-solid fa-file-image",
+    jpeg: "fa-solid fa-file-image",
+    png: "fa-solid fa-file-image",
+    gif: "fa-solid fa-file-image",
   };
-  return icons[ext] || "fa-file";
+  return iconMap[ext] || "fa-solid fa-file";
 };
 
 export const getFileIconColor = (fileName) => {
   if (!fileName) return "#666";
   const ext = fileName.split(".").pop().toLowerCase();
-  const colors = {
+  const colorMap = {
     pdf: "#d32f2f",
-    doc: "#2196f3",
-    docx: "#2196f3",
+    doc: "#2b579a",
+    docx: "#2b579a",
+    xls: "#217346",
+    xlsx: "#217346",
+    ppt: "#d24726",
+    pptx: "#d24726",
     txt: "#666",
+    mp3: "#a020f0",
+    wav: "#a020f0",
     jpg: "#4caf50",
     jpeg: "#4caf50",
     png: "#4caf50",
     gif: "#9c27b0",
   };
-  return colors[ext] || "#666";
+  return colorMap[ext] || "#666";
 };
 
 export const getMessageType = (file) => {

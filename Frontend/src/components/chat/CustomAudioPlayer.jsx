@@ -34,6 +34,7 @@ const CustomAudioPlayer = ({ src }) => {
     audio.addEventListener("ended", onEnded);
 
     return () => {
+      audio.pause(); // Stop playback
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
       audio.removeEventListener("ended", onEnded);

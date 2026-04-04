@@ -72,14 +72,16 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
     const messageSub = subscribe(`/topic/private/${myEmail}`, (frame) => {
       const msg = JSON.parse(frame.body);
 
-      if (!msg.content && msg.status === "READ") return;
+      // Handle all message updates in one place
+      setMessages((prev) => {
+        // Read receipt
+        if (!msg.content && msg.status === "READ") return prev;
 
-      const sender = msg.sender?.trim().toLowerCase();
-      const contact = activeContactRef.current;
-      const contactEmail = contact?.email?.toLowerCase();
+        const sender = msg.sender?.trim().toLowerCase();
+        const contact = activeContactRef.current;
 
-      if (sender === myEmail) {
-        setMessages((prev) => {
+        // Own message - replace temp with real
+        if (sender === myEmail) {
           const tempIdx = prev.findIndex(
             (m) =>
               typeof m.id === "string" &&
@@ -93,21 +95,22 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
           }
           if (msg.id && prev.some((m) => m.id === msg.id)) return prev;
           return prev;
-        });
-        return;
-      }
+        }
 
-      if (sender !== contactEmail) return;
-
-      setMessages((prev) => {
+        // Incoming message
+        if (sender !== contact?.email?.toLowerCase()) return prev;
         if (msg.id && prev.some((m) => m.id === msg.id)) return prev;
         return [...prev, msg];
       });
 
-      if (contact) {
+      // Auto-mark as read only if from active contact
+      if (
+        msg.sender?.toLowerCase() ===
+        activeContactRef.current?.email?.toLowerCase()
+      ) {
         send("/app/chat.readMessage", {
           sender: user.email,
-          receiver: contact.email,
+          receiver: activeContactRef.current.email,
           status: "READ",
         });
       }

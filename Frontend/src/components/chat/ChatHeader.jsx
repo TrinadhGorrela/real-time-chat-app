@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { formatTime2 } from "../../utils/dateFormatter";
+import { formatters } from "../../utils/dateFormatter";
 import styles from "./ChatHeader.module.css";
 
 const ChatHeader = ({
@@ -74,7 +74,7 @@ const ChatHeader = ({
                   {status.isOnline
                     ? "Online"
                     : status.lastSeen
-                      ? `Last seen ${formatTime2(status.lastSeen)}`
+                      ? `Last seen ${formatters.relativeTime(status.lastSeen)}`
                       : "Offline"}
                 </span>
               </div>

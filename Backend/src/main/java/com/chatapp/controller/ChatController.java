@@ -99,9 +99,7 @@ public class ChatController {
     @DeleteMapping("/chatapp/message/{id}")
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
         return messageRepo.findById(id).map(message -> {
-            // Delete file if exists
             if (message.getFileUrl() != null && !message.getFileUrl().isEmpty()) {
-                String filename = message.getFileName();
                 String fileUrl = message.getFileUrl();
                 String storedFilename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
                 filesStorageService.delete(storedFilename);
