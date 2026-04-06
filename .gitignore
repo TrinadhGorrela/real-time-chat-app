@@ -1,6 +1,32 @@
-﻿.vscode/
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Backend (Java/Spring Boot)
 target/
-ChatApp/target/
+*.class
+*.jar
+*.war
+*.ear
+logs/
+uploads/
 
+# Frontend (Node)
+node_modules/
+dist/
+dist-ssr/
+build/
 
+# Environment Variables
+.env
+.env.*
+!.env.example
 
+# OS Generated
+.DS_Store
+Thumbs.db

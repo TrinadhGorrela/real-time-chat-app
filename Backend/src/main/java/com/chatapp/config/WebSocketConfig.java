@@ -3,7 +3,6 @@ package com.chatapp.config;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
@@ -16,7 +15,6 @@ import org.springframework.web.socket.config.annotation.*;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
-
 import com.chatapp.entity.User;
 import com.chatapp.repository.UserRepository;
 
@@ -28,8 +26,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("http://localhost:3000", "http://localhost:8081", "https://localhost:3000",
-                        "https://localhost:8081", "http://localhost:5173", "https://localhost:5173", "*")
-                .setHandshakeHandler(new DefaultHandshakeHandler())
+                        "https://localhost:8081", "http://localhost:5173", "https://localhost:5173")
+                        .setHandshakeHandler(new DefaultHandshakeHandler())
                 .withSockJS();
     }
 

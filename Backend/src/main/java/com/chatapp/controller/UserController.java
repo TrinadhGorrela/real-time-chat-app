@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/chatapp")
-@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8081" }, allowCredentials = "true")
 public class UserController {
 
     @Autowired
@@ -165,21 +164,26 @@ public class UserController {
         String myEmail = principal.getName();
         List<Friendship> friendships = friendshipRepository.findByUserEmailAndStatus(myEmail, "ACCEPTED");
 
-        List<User> friends = friendships.stream()
-                .map(f -> {
-                    User friend = userRepository.findByEmail(f.getFriendEmail());
-                    if (friend != null) {
-                        Message lastMsg = messageRepo.findLatestMessage(myEmail, friend.getEmail()).orElse(null);
-                        if (lastMsg != null) {
-                            friend.setLastMessageTime(lastMsg.getTimestamp());
-                        }
-                        long unread = messageRepo.countUnreadMessages(friend.getEmail(), myEmail);
-                        friend.setUnreadCount((int) unread);
-                    }
-                    return friend;
-                })
-                .filter(Objects::nonNull)
+        // Batch fetch all friends at once
+        List<String> friendEmails = friendships.stream()
+                .map(Friendship::getFriendEmail)
                 .collect(Collectors.toList());
+        
+        if (friendEmails.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        List<User> friends = userRepository.findByEmailIn(friendEmails);
+        
+        // Enrich with last message and unread count
+        friends.forEach(friend -> {
+            Message lastMsg = messageRepo.findLatestMessage(myEmail, friend.getEmail()).orElse(null);
+            if (lastMsg != null) {
+                friend.setLastMessageTime(lastMsg.getTimestamp());
+            }
+            long unread = messageRepo.countUnreadMessages(friend.getEmail(), myEmail);
+            friend.setUnreadCount((int) unread);
+        });
 
         return ResponseEntity.ok(friends);
     }

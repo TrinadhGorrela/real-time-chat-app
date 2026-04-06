@@ -4,7 +4,7 @@ import styles from "./CustomAudioPlayer.module.css";
 const CustomAudioPlayer = ({ src }) => {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0); // 0 to 100
+  const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
@@ -34,7 +34,9 @@ const CustomAudioPlayer = ({ src }) => {
     audio.addEventListener("ended", onEnded);
 
     return () => {
-      audio.pause(); // Stop playback
+      audio.pause(); 
+      audio.src = '';  
+      audio.load();
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
       audio.removeEventListener("ended", onEnded);

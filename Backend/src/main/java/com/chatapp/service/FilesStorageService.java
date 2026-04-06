@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.annotation.PostConstruct;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Set;
 import java.util.UUID;
@@ -19,6 +19,8 @@ import java.util.UUID;
 @Service
 public class FilesStorageService {
     @Value("${app.upload-dir}")
+    private String uploadDir;
+
     private Path fileStorageLocation;
 
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
@@ -29,6 +31,7 @@ public class FilesStorageService {
     @PostConstruct
     public void init() {
         try {
+            this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
             Files.createDirectories(fileStorageLocation);
         } catch (IOException e) {
             throw new RuntimeException("Could not initialize storage", e);

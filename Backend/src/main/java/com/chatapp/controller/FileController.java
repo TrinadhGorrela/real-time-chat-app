@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/files")
-@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8081" }, allowCredentials = "true")
 public class FileController {
 
     @Autowired
