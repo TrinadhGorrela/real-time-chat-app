@@ -105,11 +105,13 @@ const MessageInput = ({ onSendMessage, onTyping }) => {
       cancelPreview();
     } catch (err) {
       console.error("File upload failed:", err);
-      let msg =
-        "Upload failed: " + (err.response?.data?.message || err.message);
+      let msg = "Upload failed: ";
       if (err.code === "ECONNABORTED") {
-        msg =
-          "Upload failed: Request timed out. internet connection might be slow.";
+        msg += "Request timed out. Check your internet connection.";
+      } else if (err.response?.status === 400) {
+        msg += err.response.data?.message || "Invalid file type.";
+      } else {
+        msg += err.response?.data?.message || err.message || "Unknown error.";
       }
       setErrorMessage(msg);
     } finally {

@@ -174,8 +174,7 @@ public class UserController {
         }
 
         List<User> friends = userRepository.findByEmailIn(friendEmails);
-        
-        // Enrich with last message and unread count
+
         friends.forEach(friend -> {
             Message lastMsg = messageRepo.findLatestMessage(myEmail, friend.getEmail()).orElse(null);
             if (lastMsg != null) {
