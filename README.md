@@ -66,13 +66,11 @@ A full-stack real-time chat application built with React and Spring Boot, featur
 ```mermaid
 graph TD
     Client[Client Browser - React App]
-    LB[Load Balancer / Nginx]
     Backend[Backend Server - Spring Boot]
     DB[(MySQL Database)]
 
-    Client -->|HTTP/REST| LB
-    Client -->|WebSocket| LB
-    LB --> Backend
+    Client -->|HTTP/REST| Backend
+    Client -->|WebSocket| Backend
     Backend --> DB
 ```
 
