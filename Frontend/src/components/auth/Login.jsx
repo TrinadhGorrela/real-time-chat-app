@@ -44,20 +44,7 @@ const Login = () => {
       navigate("/chat");
     } catch (err) {
       console.error("Login error:", err);
-
-      if (!err.response) {
-        setError(
-          "Unable to connect to server. Please check your internet connection.",
-        );
-      } else if (err.response.status === 401) {
-        setError(err.response?.data?.message || "Invalid email or password");
-      } else if (err.response.status === 500) {
-        setError("Server error. Please try again later.");
-      } else {
-        setError(
-          err.response?.data?.message || "Login failed. Please try again.",
-        );
-      }
+      setError(err.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -81,6 +81,7 @@ public class UserController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Invalid email or password"));
         }

@@ -67,7 +67,6 @@ public class FileController {
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000")
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
                     .body(file);
         }
@@ -78,7 +77,6 @@ public class FileController {
     @RequestMapping(method = RequestMethod.OPTIONS)
     public ResponseEntity<?> handleOptions() {
         return ResponseEntity.ok()
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000")
                 .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
                 .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*")
                 .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")

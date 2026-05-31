@@ -48,7 +48,7 @@ const Register = () => {
       login(loginData);
       navigate("/chat");
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      setError(err.message || "Registration failed");
     } finally {
       setLoading(false);
     }

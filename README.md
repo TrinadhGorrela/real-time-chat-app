@@ -200,7 +200,6 @@ chatapp/
     │   ├── application.properties        # DB config, JWT secret, server port
     ├── uploads/                          # Uploaded files storage
     └──pom.xml                            # Maven dependencies
-    └──
 ```
 
 ## Getting Started
@@ -216,7 +215,7 @@ chatapp/
 
 1. Clone the repository:
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/TrinadhGorrela/real-time-chat-app.git
    cd chatapp/backend
    ```
 2. Create MySQL database:

@@ -129,7 +129,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
 
     const statusSub = subscribe("/topic/status", (frame) => {
       const s = JSON.parse(frame.body);
-      console.log("Received status update:", s);
       const currentContactEmail =
         activeContactRef.current?.email?.toLowerCase();
       if (s.email?.toLowerCase() === currentContactEmail) {
@@ -348,7 +347,7 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
       {messageToDelete && (
         <ConfirmModal
           title="Delete Message"
-          message="This message will be delete from you. This action cannot be undone."
+          message="This message will be deleted. This action cannot be undone."
           onConfirm={confirmDeleteMessage}
           onCancel={() => setMessageToDelete(null)}
         />
