@@ -24,7 +24,7 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:8081,https://localhost:3000,https://localhost:8081,http://localhost:5173,https://localhost:5173}")
+    @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:8081,https://localhost:3000,https://localhost:8081,http://localhost:5173,https://localhost:5173,https://real-time-chat-app-eta-roan.vercel.app}")
     private String[] allowedOrigins;
 
     @Bean
