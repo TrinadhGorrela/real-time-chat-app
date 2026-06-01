@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import fileService from "../../services/fileService";
 import { getFileIconClass, getFileIconColor } from "../../utils/fileHelpers";
-import styles from "./MessageInput.module.css";
+import styles from "./Messageinput.module.css";
 import ConfirmModal from "../modals/ConfirmModal";
 import CustomAudioPlayer from "./CustomAudioPlayer";
 

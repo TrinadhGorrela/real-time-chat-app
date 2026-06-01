@@ -1,5 +1,5 @@
 import { formatters } from "../../utils/dateFormatter";
-import styles from "./DateHeader.module.css";
+import styles from "./Dateheader.module.css";
 
 const DateHeader = ({ date }) => {
   const label = formatters.dateHeader(date);

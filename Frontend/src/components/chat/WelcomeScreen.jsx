@@ -1,4 +1,4 @@
-import styles from "./WelcomeScreen.module.css";
+import styles from "./Welcomescreen.module.css";
 
 const WelcomeScreen = () => {
   return (
