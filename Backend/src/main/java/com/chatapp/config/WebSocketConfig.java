@@ -22,12 +22,14 @@ import com.chatapp.repository.UserRepository;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    @org.springframework.beans.factory.annotation.Value("${cors.allowed-origins:http://localhost:3000,http://localhost:8081,https://localhost:3000,https://localhost:8081,http://localhost:5173,https://localhost:5173,https://real-time-chat-app-eta-roan.vercel.app}")
+    private String[] allowedOrigins;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("http://localhost:3000", "http://localhost:8081", "https://localhost:3000",
-                        "https://localhost:8081", "http://localhost:5173", "https://localhost:5173")
-                        .setHandshakeHandler(new DefaultHandshakeHandler())
+                .setAllowedOriginPatterns(allowedOrigins)
+                .setHandshakeHandler(new DefaultHandshakeHandler())
                 .withSockJS();
     }
 
