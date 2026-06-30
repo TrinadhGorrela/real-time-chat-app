@@ -2,59 +2,34 @@ package com.chatapp.controller;
 
 import com.chatapp.entity.User;
 import com.chatapp.entity.Friendship;
-import com.chatapp.entity.Message;
-import com.chatapp.repository.UserRepository;
-import com.chatapp.repository.FriendshipRepository;
-import com.chatapp.repository.MessageRepo;
-import com.chatapp.security.JwtUtil;
+import com.chatapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/chatapp")
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private FriendshipRepository friendshipRepository;
-
-    @Autowired
-    private MessageRepo messageRepo;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private UserService userService;
 
     // ============================================
-    // 1. REGISTRATION (Add User)
+    // 1. REGISTRATION (New User)
     // ============================================
     @PostMapping("/adduser")
     public ResponseEntity<?> addUser(@RequestBody User user) {
         try {
-            if (userRepository.findByEmail(user.getEmail()) != null) {
+            User savedUser = userService.registerUser(user);
+            return ResponseEntity.ok(savedUser);
+        } catch (Exception e) {
+            if (e.getMessage().equals("Email already exists")) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body(Map.of("message", "Email already exists"));
             }
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            User savedUser = userRepository.save(user);
-            return ResponseEntity.ok(savedUser);
-        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "Registration failed"));
@@ -67,18 +42,7 @@ public class UserController {
     @PostMapping("/validateuser")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-
-            String token = jwtUtil.generateToken(user.getEmail());
-            User dbUser = userRepository.findByEmail(user.getEmail());
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", token);
-            response.put("user", Map.of(
-                    "email", dbUser.getEmail(),
-                    "name", dbUser.getName()));
-
+            Map<String, Object> response = userService.authenticateUser(user);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,37 +52,27 @@ public class UserController {
     }
 
     // ============================================
-    // 3. SEND REQUEST (Requires Approval)
+    // 3. SEND FRIEND REQUEST (Requires Approval)
     // ============================================
     @PostMapping("/request")
     public ResponseEntity<?> sendFriendRequest(@RequestBody Map<String, String> request, Principal principal) {
         String myEmail = principal.getName();
         String targetEmail = request.get("approver");
 
-        if (myEmail.equalsIgnoreCase(targetEmail)) {
-            return ResponseEntity.badRequest().body(Map.of("message", "You cannot add yourself"));
+        try {
+            userService.sendFriendRequest(myEmail, targetEmail);
+            return ResponseEntity.ok(Map.of("message", "Friend request sent successfully!"));
+        } catch (Exception e) {
+            if (e.getMessage().equals("You cannot add yourself")) {
+                return ResponseEntity.badRequest().body(Map.of("message", "You cannot add yourself"));
+            } else if (e.getMessage().equals("User not found")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+            } else if (e.getMessage().equals("Request already pending or you are already friends")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("message", "Request already pending or you are already friends"));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        User targetUser = userRepository.findByEmail(targetEmail);
-        if (targetUser == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
-        }
-
-        List<Friendship> existing1 = friendshipRepository.findByUserEmailAndFriendEmail(targetEmail, myEmail);
-        List<Friendship> existing2 = friendshipRepository.findByUserEmailAndFriendEmail(myEmail, targetEmail);
-
-        if (!existing1.isEmpty() || !existing2.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", "Request already pending or you are already friends"));
-        }
-
-        Friendship pending = new Friendship();
-        pending.setUserEmail(targetEmail);
-        pending.setFriendEmail(myEmail);
-        pending.setStatus("PENDING");
-        friendshipRepository.save(pending);
-
-        return ResponseEntity.ok(Map.of("message", "Friend request sent successfully!"));
     }
 
     // ============================================
@@ -127,7 +81,7 @@ public class UserController {
     @GetMapping("/requests")
     public ResponseEntity<List<Friendship>> getMyRequests(Principal principal) {
         String myEmail = principal.getName();
-        List<Friendship> requests = friendshipRepository.findByUserEmailAndStatus(myEmail, "PENDING");
+        List<Friendship> requests = userService.getPendingRequests(myEmail);
         return ResponseEntity.ok(requests);
     }
 
@@ -139,18 +93,8 @@ public class UserController {
         String myEmail = principal.getName();
         Long requestId = request.get("id");
 
-        Friendship f = friendshipRepository.findById(requestId).orElse(null);
-
-        if (f != null && f.getUserEmail().equalsIgnoreCase(myEmail)) {
-            f.setStatus("ACCEPTED");
-            friendshipRepository.save(f);
-
-            Friendship reverse = new Friendship();
-            reverse.setUserEmail(f.getFriendEmail());
-            reverse.setFriendEmail(myEmail);
-            reverse.setStatus("ACCEPTED");
-            friendshipRepository.save(reverse);
-
+        boolean accepted = userService.acceptRequest(myEmail, requestId);
+        if (accepted) {
             return ResponseEntity.ok(Map.of("message", "Friend request accepted!"));
         }
 
@@ -163,28 +107,7 @@ public class UserController {
     @GetMapping("/mycontacts")
     public ResponseEntity<List<User>> getContacts(Principal principal) {
         String myEmail = principal.getName();
-        List<Friendship> friendships = friendshipRepository.findByUserEmailAndStatus(myEmail, "ACCEPTED");
-
-        // Batch fetch all friends at once
-        List<String> friendEmails = friendships.stream()
-                .map(Friendship::getFriendEmail)
-                .collect(Collectors.toList());
-        
-        if (friendEmails.isEmpty()) {
-            return ResponseEntity.ok(Collections.emptyList());
-        }
-
-        List<User> friends = userRepository.findByEmailIn(friendEmails);
-
-        friends.forEach(friend -> {
-            Message lastMsg = messageRepo.findLatestMessage(myEmail, friend.getEmail()).orElse(null);
-            if (lastMsg != null) {
-                friend.setLastMessageTime(lastMsg.getTimestamp());
-            }
-            long unread = messageRepo.countUnreadMessages(friend.getEmail(), myEmail);
-            friend.setUnreadCount((int) unread);
-        });
-
+        List<User> friends = userService.getContacts(myEmail);
         return ResponseEntity.ok(friends);
     }
 
@@ -192,8 +115,7 @@ public class UserController {
     // 7. DELETE/UNFRIEND
     // ============================================
     @PostMapping("/delete-contact")
-    public ResponseEntity<?> deleteContact(@RequestBody Map<String, String> request,
-            Principal principal) {
+    public ResponseEntity<?> deleteContact(@RequestBody Map<String, String> request, Principal principal) {
         String myEmail = principal.getName();
         String friendEmail = request.get("friend");
 
@@ -202,18 +124,7 @@ public class UserController {
         }
 
         try {
-            List<Friendship> f1 = friendshipRepository.findByUserEmailAndFriendEmail(myEmail, friendEmail);
-            List<Friendship> f2 = friendshipRepository.findByUserEmailAndFriendEmail(friendEmail, myEmail);
-
-            if (!f1.isEmpty()) {
-                friendshipRepository.deleteAll(f1);
-                System.out.println("Deleted: " + myEmail + " -> " + friendEmail);
-            }
-            if (!f2.isEmpty()) {
-                friendshipRepository.deleteAll(f2);
-                System.out.println("Deleted: " + friendEmail + " -> " + myEmail);
-            }
-
+            userService.deleteContact(myEmail, friendEmail);
             return ResponseEntity.ok(Map.of("message", "Contact removed successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(500)
@@ -229,10 +140,8 @@ public class UserController {
         String myEmail = principal.getName();
         Long requestId = request.get("id");
 
-        Friendship f = friendshipRepository.findById(requestId).orElse(null);
-
-        if (f != null && f.getUserEmail().equalsIgnoreCase(myEmail)) {
-            friendshipRepository.delete(f);
+        boolean declined = userService.declineRequest(myEmail, requestId);
+        if (declined) {
             return ResponseEntity.ok(Map.of("message", "Request declined"));
         }
 
@@ -245,13 +154,9 @@ public class UserController {
     // ============================================
     @GetMapping("/status/check/{email}")
     public ResponseEntity<?> checkStatus(@PathVariable String email) {
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("email", user.getEmail());
-            response.put("isOnline", user.isOnline());
-            response.put("lastSeen", user.getLastSeen() != null ? user.getLastSeen().toString() : null);
-            return ResponseEntity.ok(response);
+        Map<String, Object> status = userService.checkStatus(email);
+        if (status != null) {
+            return ResponseEntity.ok(status);
         }
         return ResponseEntity.notFound().build();
     }
@@ -270,19 +175,18 @@ public class UserController {
                     .body(Map.of("message", "Both current and new passwords are required"));
         }
 
-        User user = userRepository.findByEmail(myEmail);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+        try {
+            userService.updatePassword(myEmail, currentPassword, newPassword);
+            return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+        } catch (Exception e) {
+            if (e.getMessage().equals("User not found")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+            } else if (e.getMessage().equals("Incorrect current password")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Incorrect current password"));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Incorrect current password"));
-        }
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-        return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
 
     // ============================================
@@ -297,14 +201,15 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("message", "New name is required"));
         }
 
-        User user = userRepository.findByEmail(myEmail);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+        try {
+            User updatedUser = userService.updateName(myEmail, newName);
+            return ResponseEntity.ok(Map.of("message", "Name updated successfully", "newName", updatedUser.getName()));
+        } catch (Exception e) {
+            if (e.getMessage().equals("User not found")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        user.setName(newName.trim());
-        userRepository.save(user);
-        return ResponseEntity.ok(Map.of("message", "Name updated successfully", "newName", user.getName()));
     }
 
 }

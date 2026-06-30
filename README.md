@@ -6,15 +6,26 @@ A full-stack real-time chat application built with React and Spring Boot, featur
 
 | Section                              | Description                             |
 | ------------------------------------ | --------------------------------------- |
-| [Features](#-features)               | Real-time messaging, Auth, File Sharing |
-| [Tech Stack](#-tech-stack)           | React, Spring Boot, WebSocket, MySQL    |
-| [Architecture](#-architecture)       | System design & Data flow diagrams      |
-| [Structure](#-project-structure)     | Codebase organization & modules         |
-| [Getting Started](#-getting-started) | Setup guide for Backend & Frontend      |
-| [API Docs](#-api-documentation)      | REST Endpoints & Usage                  |
-| [WebSocket](#-websocket-events)      | Real-time event payloads & topics       |
-| [Screenshots](#-screenshots)         | App preview on Desktop & Mobile         |
-| [Contributing](#-contributing)       | Guidelines for contributing             |
+| [Live Demo](#live-demo)              | Deployed application links              |
+| [Features](#features)                | Real-time messaging, Auth, File Sharing |
+| [Tech Stack](#tech-stack)            | React, Spring Boot, WebSocket, MySQL    |
+| [Architecture](#architecture)        | System design & Data flow diagrams      |
+| [Structure](#project-structure)      | Codebase organization & modules         |
+| [Getting Started](#getting-started)  | Setup guide for Backend & Frontend      |
+| [API Docs](#api-documentation)       | REST Endpoints & Usage                  |
+| [WebSocket](#websocket-events)       | Real-time event payloads & topics       |
+| [Screenshots](#screenshots)          | App preview on Desktop & Mobile         |
+| [Contributing](#contributing)        | Guidelines for contributing             |
+
+## Live Demo
+
+The application is deployed and live at the following links:
+
+* **Frontend Application:** [Live Frontend URL](https://real-time-chat-app-eta-roan.vercel.app/)
+* **Backend API Server:** [Live Backend URL](https://real-time-chat-app-hxla.onrender.com)
+
+> [!NOTE]
+> Since the backend is deployed on a free hosting tier, i.e., Render, the server may spin down after periods of inactivity. If you experience a delay during your initial request, please wait 30–60 seconds for the backend services to spin back up.
 
 ## Features
 

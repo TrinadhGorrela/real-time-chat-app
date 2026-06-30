@@ -1,19 +1,14 @@
 package com.chatapp.controller;
 
 import com.chatapp.entity.Message;
-import com.chatapp.repository.MessageRepo;
+import com.chatapp.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -21,44 +16,15 @@ import java.util.Map;
 public class ChatController {
 
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
-
-    @Autowired
-    private MessageRepo messageRepo;
+    private ChatService chatService;
 
     // ============================================
     // 1. SENDING MESSAGES (WebSocket)
     // ============================================
     @MessageMapping("/chat")
     @SendToUser("/queue/private-chat")
-    @Transactional
     public Message sendMessage(@Payload Message chatMessage) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String senderEmail = auth != null ? auth.getName() : null;
-
-        if (senderEmail == null) {
-            senderEmail = chatMessage.getSender();
-        }
-
-        senderEmail = senderEmail.trim().toLowerCase();
-        String receiverEmail = chatMessage.getReceiver().trim().toLowerCase();
-
-        if (chatMessage.getContent() == null)
-            chatMessage.setContent("");
-        if (chatMessage.getFileUrl() == null)
-            chatMessage.setFileUrl("");
-        if (chatMessage.getFileName() == null)
-            chatMessage.setFileName("");
-
-        chatMessage.setSender(senderEmail);
-        chatMessage.setReceiver(receiverEmail);
-        chatMessage.setStatus("SENT");
-        chatMessage.setTimestamp(LocalDateTime.now());
-
-        Message saved = messageRepo.save(chatMessage);
-        simpMessagingTemplate.convertAndSend("/topic/private/" + saved.getReceiver(), saved);
-        simpMessagingTemplate.convertAndSend("/topic/private/" + saved.getSender(), saved);
-        return saved;
+        return chatService.processAndSendMessage(chatMessage);
     }
 
     // ============================================
@@ -66,16 +32,7 @@ public class ChatController {
     // ============================================
     @MessageMapping("/chat.readMessage")
     public void sendReadReceipt(@Payload Message receipt) {
-        if (receipt.getReceiver() != null) {
-            String originalSender = receipt.getReceiver();
-            String reader = receipt.getSender();
-            messageRepo.markMessagesAsRead(originalSender, reader);
-            Map<String, Object> readEvent = Map.of(
-                    "type", "READ_RECEIPT",
-                    "reader", reader);
-
-            simpMessagingTemplate.convertAndSend("/topic/private/" + originalSender, readEvent);
-        }
+        chatService.processReadReceipt(receipt);
     }
 
     // ============================================
@@ -83,29 +40,20 @@ public class ChatController {
     // ============================================
     @GetMapping("/chatapp/messages/{user1}/{user2}")
     public List<Message> getChatHistory(@PathVariable String user1, @PathVariable String user2) {
-        return messageRepo.findConversation(
-                user1.trim().toLowerCase(),
-                user2.trim().toLowerCase());
+        return chatService.getChatHistory(user1, user2);
     }
 
     // ============================================
     // 4. DELETE MESSAGE (REST API)
     // ============================================
-    @Autowired
-    private com.chatapp.service.FilesStorageService filesStorageService;
-
     @DeleteMapping("/chatapp/message/{id}")
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
-        return messageRepo.findById(id).map(message -> {
-            if (message.getFileUrl() != null && !message.getFileUrl().isEmpty()) {
-                String fileUrl = message.getFileUrl();
-                String storedFilename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-                filesStorageService.delete(storedFilename);
-            }
-
-            messageRepo.delete(message);
+        boolean deleted = chatService.deleteMessage(id);
+        if (deleted) {
             return ResponseEntity.ok().<Void>build();
-        }).orElse(ResponseEntity.notFound().build());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // ============================================
@@ -113,15 +61,7 @@ public class ChatController {
     // ============================================
     @MessageMapping("/chat.typing")
     public void sendTypingStatus(@Payload Map<String, String> typingStatus) {
-        String receiver = typingStatus.get("receiver");
-        String sender = typingStatus.get("sender");
-        String isTyping = typingStatus.get("isTyping");
-
-        simpMessagingTemplate.convertAndSend(
-                "/topic/typing/" + receiver.toLowerCase(),
-                Map.of(
-                        "sender", sender.toLowerCase(),
-                        "isTyping", "true".equals(isTyping)));
+        chatService.processTypingStatus(typingStatus);
     }
 
     // ============================================
@@ -137,8 +77,7 @@ public class ChatController {
         }
 
         try {
-            messageRepo.deleteConversation(myEmail, friendEmail);
-            System.out.println("Purged conversation history between: " + myEmail + " and " + friendEmail);
+            chatService.clearChat(myEmail, friendEmail);
             return ResponseEntity.ok(Map.of("message", "Chat cleared successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(500)
