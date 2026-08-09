@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.chatapp.service.FilesStorageService;
+import com.chatapp.service.FileService;
 
 @SpringBootApplication
 public class ChatApplication {
@@ -16,7 +16,7 @@ public class ChatApplication {
 	}
 
 	@Bean
-	CommandLineRunner initStorage(FilesStorageService storageService) {
+	CommandLineRunner initStorage(FileService storageService) {
 		return args -> storageService.init();
 	}
 

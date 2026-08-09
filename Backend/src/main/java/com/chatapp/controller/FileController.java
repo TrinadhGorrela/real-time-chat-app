@@ -1,6 +1,6 @@
 package com.chatapp.controller;
 
-import com.chatapp.service.FilesStorageService;
+import com.chatapp.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -17,25 +17,14 @@ import java.util.Map;
 public class FileController {
 
     @Autowired
-    private FilesStorageService filesStorageService;
+    private FileService fileService;
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, Object>> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            String fileUrl = filesStorageService.save(file);
+            String fileUrl = fileService.save(file);
             String contentType = file.getContentType();
-            String type = "FILE";
-            if (contentType != null) {
-                if (contentType.startsWith("image/"))
-                    type = "IMAGE";
-                else if (contentType.startsWith("video/"))
-                    type = "VIDEO";
-                else if (contentType.startsWith("audio/"))
-                    type = "AUDIO";
-                else if (contentType.contains("pdf") || contentType.contains("word") || contentType.contains("text")
-                        || contentType.contains("presentation") || contentType.contains("powerpoint"))
-                    type = "DOCUMENT";
-            }
+            String type = fileService.determineMessageType(contentType);
 
             Map<String, Object> response = Map.of(
                     "messageType", type,
@@ -60,10 +49,10 @@ public class FileController {
 
     @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        Resource file = filesStorageService.load(filename);
+        Resource file = fileService.load(filename);
 
         if (file != null && file.exists()) {
-            String contentType = getContentTypeFromFilename(filename);
+            String contentType = fileService.getContentTypeFromFilename(filename);
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
@@ -72,39 +61,5 @@ public class FileController {
         }
 
         return ResponseEntity.notFound().build();
-    }
-
-    @RequestMapping(method = RequestMethod.OPTIONS)
-    public ResponseEntity<?> handleOptions() {
-        return ResponseEntity.ok()
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*")
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
-                .build();
-    }
-
-    private String getContentTypeFromFilename(String filename) {
-        String ext = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
-        return switch (ext) {
-            case "jpg", "jpeg" -> "image/jpeg";
-            case "png" -> "image/png";
-            case "gif" -> "image/gif";
-            case "webp" -> "image/webp";
-            case "pdf" -> "application/pdf";
-            case "txt" -> "text/plain";
-            case "doc", "docx" -> "application/msword";
-            case "xls", "xlsx" -> "application/vnd.ms-excel";
-            case "mp4" -> "video/mp4";
-            case "webm" -> "video/webm";
-            case "ogg" -> "video/ogg";
-            case "mov" -> "video/quicktime";
-            case "mkv" -> "video/x-matroska";
-            case "avi" -> "video/x-msvideo";
-            case "mp3" -> "audio/mpeg";
-            case "wav" -> "audio/wav";
-            case "ppt" -> "application/vnd.ms-powerpoint";
-            case "pptx" -> "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-            default -> "application/octet-stream";
-        };
     }
 }

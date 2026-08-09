@@ -1,14 +1,13 @@
 package com.chatapp.service;
 
 import com.chatapp.entity.Message;
-import com.chatapp.repository.MessageRepo;
+import com.chatapp.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +19,10 @@ public class ChatService {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
-    private MessageRepo messageRepo;
+    private MessageRepository messageRepository;
 
     @Autowired
-    private FilesStorageService filesStorageService;
+    private FileService fileService;
 
     @Transactional
     public Message processAndSendMessage(Message chatMessage) {
@@ -49,7 +48,7 @@ public class ChatService {
         chatMessage.setStatus("SENT");
         chatMessage.setTimestamp(LocalDateTime.now());
 
-        Message saved = messageRepo.save(chatMessage);
+        Message saved = messageRepository.save(chatMessage);
         simpMessagingTemplate.convertAndSend("/topic/private/" + saved.getReceiver(), saved);
         simpMessagingTemplate.convertAndSend("/topic/private/" + saved.getSender(), saved);
         return saved;
@@ -59,7 +58,7 @@ public class ChatService {
         if (receipt.getReceiver() != null) {
             String originalSender = receipt.getReceiver();
             String reader = receipt.getSender();
-            messageRepo.markMessagesAsRead(originalSender, reader);
+            messageRepository.markMessagesAsRead(originalSender, reader);
             Map<String, Object> readEvent = Map.of(
                     "type", "READ_RECEIPT",
                     "reader", reader);
@@ -69,20 +68,20 @@ public class ChatService {
     }
 
     public List<Message> getChatHistory(String user1, String user2) {
-        return messageRepo.findConversation(
+        return messageRepository.findConversation(
                 user1.trim().toLowerCase(),
                 user2.trim().toLowerCase());
     }
 
     public boolean deleteMessage(Long id) {
-        return messageRepo.findById(id).map(message -> {
+        return messageRepository.findById(id).map(message -> {
             if (message.getFileUrl() != null && !message.getFileUrl().isEmpty()) {
                 String fileUrl = message.getFileUrl();
                 String storedFilename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-                filesStorageService.delete(storedFilename);
+                fileService.delete(storedFilename);
             }
 
-            messageRepo.delete(message);
+            messageRepository.delete(message);
             return true;
         }).orElse(false);
     }
@@ -100,7 +99,7 @@ public class ChatService {
     }
 
     public void clearChat(String myEmail, String friendEmail) throws Exception {
-        messageRepo.deleteConversation(myEmail, friendEmail);
+        messageRepository.deleteConversation(myEmail, friendEmail);
         System.out.println("Purged conversation history between: " + myEmail + " and " + friendEmail);
     }
 }

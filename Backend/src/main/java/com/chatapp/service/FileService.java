@@ -17,7 +17,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-public class FilesStorageService {
+public class FileService {
+    
     @Value("${app.upload-dir}")
     private String uploadDir;
 
@@ -94,5 +95,46 @@ public class FilesStorageService {
             return "";
         int lastDot = filename.lastIndexOf('.');
         return (lastDot > 0) ? filename.substring(lastDot + 1) : "";
+    }
+
+    public String determineMessageType(String contentType) {
+        String type = "FILE";
+        if (contentType != null) {
+            if (contentType.startsWith("image/"))
+                type = "IMAGE";
+            else if (contentType.startsWith("video/"))
+                type = "VIDEO";
+            else if (contentType.startsWith("audio/"))
+                type = "AUDIO";
+            else if (contentType.contains("pdf") || contentType.contains("word") || contentType.contains("text")
+                    || contentType.contains("presentation") || contentType.contains("powerpoint"))
+                type = "DOCUMENT";
+        }
+        return type;
+    }
+
+    public String getContentTypeFromFilename(String filename) {
+        String ext = getFileExtension(filename).toLowerCase();
+        return switch (ext) {
+            case "jpg", "jpeg" -> "image/jpeg";
+            case "png" -> "image/png";
+            case "gif" -> "image/gif";
+            case "webp" -> "image/webp";
+            case "pdf" -> "application/pdf";
+            case "txt" -> "text/plain";
+            case "doc", "docx" -> "application/msword";
+            case "xls", "xlsx" -> "application/vnd.ms-excel";
+            case "mp4" -> "video/mp4";
+            case "webm" -> "video/webm";
+            case "ogg" -> "video/ogg";
+            case "mov" -> "video/quicktime";
+            case "mkv" -> "video/x-matroska";
+            case "avi" -> "video/x-msvideo";
+            case "mp3" -> "audio/mpeg";
+            case "wav" -> "audio/wav";
+            case "ppt" -> "application/vnd.ms-powerpoint";
+            case "pptx" -> "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+            default -> "application/octet-stream";
+        };
     }
 }

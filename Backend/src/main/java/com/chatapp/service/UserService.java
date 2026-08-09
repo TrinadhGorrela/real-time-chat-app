@@ -1,11 +1,11 @@
 package com.chatapp.service;
 
 import com.chatapp.entity.User;
-import com.chatapp.entity.Friendship;
+import com.chatapp.entity.Contact;
 import com.chatapp.entity.Message;
 import com.chatapp.repository.UserRepository;
-import com.chatapp.repository.FriendshipRepository;
-import com.chatapp.repository.MessageRepo;
+import com.chatapp.repository.ContactRepository;
+import com.chatapp.repository.MessageRepository;
 import com.chatapp.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,10 +22,10 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private FriendshipRepository friendshipRepository;
+    private ContactRepository contactRepository;
 
     @Autowired
-    private MessageRepo messageRepo;
+    private MessageRepository messageRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -36,9 +36,9 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public User registerUser(User user) throws Exception {
+    public User registerUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new Exception("Email already exists");
+            throw new UserAlreadyExistsException("Email already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -60,46 +60,46 @@ public class UserService {
         return response;
     }
 
-    public void sendFriendRequest(String myEmail, String targetEmail) throws Exception {
+    public void sendFriendRequest(String myEmail, String targetEmail) {
         if (myEmail.equalsIgnoreCase(targetEmail)) {
-            throw new Exception("You cannot add yourself");
+            throw new InvalidOperationException("You cannot add yourself");
         }
 
         User targetUser = userRepository.findByEmail(targetEmail);
         if (targetUser == null) {
-            throw new Exception("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
-        List<Friendship> existing1 = friendshipRepository.findByUserEmailAndFriendEmail(targetEmail, myEmail);
-        List<Friendship> existing2 = friendshipRepository.findByUserEmailAndFriendEmail(myEmail, targetEmail);
+        List<Contact> existing1 = contactRepository.findByUserEmailAndFriendEmail(targetEmail, myEmail);
+        List<Contact> existing2 = contactRepository.findByUserEmailAndFriendEmail(myEmail, targetEmail);
 
         if (!existing1.isEmpty() || !existing2.isEmpty()) {
-            throw new Exception("Request already pending or you are already friends");
+            throw new InvalidOperationException("Request already pending or you are already friends");
         }
 
-        Friendship pending = new Friendship();
+        Contact pending = new Contact();
         pending.setUserEmail(targetEmail);
         pending.setFriendEmail(myEmail);
         pending.setStatus("PENDING");
-        friendshipRepository.save(pending);
+        contactRepository.save(pending);
     }
 
-    public List<Friendship> getPendingRequests(String email) {
-        return friendshipRepository.findByUserEmailAndStatus(email, "PENDING");
+    public List<Contact> getPendingRequests(String email) {
+        return contactRepository.findByUserEmailAndStatus(email, "PENDING");
     }
 
     public boolean acceptRequest(String myEmail, Long requestId) {
-        Friendship f = friendshipRepository.findById(requestId).orElse(null);
+        Contact f = contactRepository.findById(requestId).orElse(null);
 
         if (f != null && f.getUserEmail().equalsIgnoreCase(myEmail)) {
             f.setStatus("ACCEPTED");
-            friendshipRepository.save(f);
+            contactRepository.save(f);
 
-            Friendship reverse = new Friendship();
+            Contact reverse = new Contact();
             reverse.setUserEmail(f.getFriendEmail());
             reverse.setFriendEmail(myEmail);
             reverse.setStatus("ACCEPTED");
-            friendshipRepository.save(reverse);
+            contactRepository.save(reverse);
 
             return true;
         }
@@ -107,11 +107,10 @@ public class UserService {
     }
 
     public List<User> getContacts(String myEmail) {
-        List<Friendship> friendships = friendshipRepository.findByUserEmailAndStatus(myEmail, "ACCEPTED");
+        List<Contact> contacts = contactRepository.findByUserEmailAndStatus(myEmail, "ACCEPTED");
 
-        // Batch fetch all friends at once
-        List<String> friendEmails = friendships.stream()
-                .map(Friendship::getFriendEmail)
+        List<String> friendEmails = contacts.stream()
+                .map(Contact::getFriendEmail)
                 .collect(Collectors.toList());
 
         if (friendEmails.isEmpty()) {
@@ -121,36 +120,36 @@ public class UserService {
         List<User> friends = userRepository.findByEmailIn(friendEmails);
 
         friends.forEach(friend -> {
-            Message lastMsg = messageRepo.findLatestMessage(myEmail, friend.getEmail()).orElse(null);
+            Message lastMsg = messageRepository.findLatestMessage(myEmail, friend.getEmail()).orElse(null);
             if (lastMsg != null) {
                 friend.setLastMessageTime(lastMsg.getTimestamp());
             }
-            long unread = messageRepo.countUnreadMessages(friend.getEmail(), myEmail);
+            long unread = messageRepository.countUnreadMessages(friend.getEmail(), myEmail);
             friend.setUnreadCount((int) unread);
         });
 
         return friends;
     }
 
-    public void deleteContact(String myEmail, String friendEmail) throws Exception {
-        List<Friendship> f1 = friendshipRepository.findByUserEmailAndFriendEmail(myEmail, friendEmail);
-        List<Friendship> f2 = friendshipRepository.findByUserEmailAndFriendEmail(friendEmail, myEmail);
+    public void deleteContact(String myEmail, String friendEmail) {
+        List<Contact> f1 = contactRepository.findByUserEmailAndFriendEmail(myEmail, friendEmail);
+        List<Contact> f2 = contactRepository.findByUserEmailAndFriendEmail(friendEmail, myEmail);
 
         if (!f1.isEmpty()) {
-            friendshipRepository.deleteAll(f1);
+            contactRepository.deleteAll(f1);
             System.out.println("Deleted: " + myEmail + " -> " + friendEmail);
         }
         if (!f2.isEmpty()) {
-            friendshipRepository.deleteAll(f2);
+            contactRepository.deleteAll(f2);
             System.out.println("Deleted: " + friendEmail + " -> " + myEmail);
         }
     }
 
     public boolean declineRequest(String myEmail, Long requestId) {
-        Friendship f = friendshipRepository.findById(requestId).orElse(null);
+        Contact f = contactRepository.findById(requestId).orElse(null);
 
         if (f != null && f.getUserEmail().equalsIgnoreCase(myEmail)) {
-            friendshipRepository.delete(f);
+            contactRepository.delete(f);
             return true;
         }
 
@@ -169,28 +168,51 @@ public class UserService {
         return null;
     }
 
-    public void updatePassword(String myEmail, String currentPassword, String newPassword) throws Exception {
+    public void updatePassword(String myEmail, String currentPassword, String newPassword) {
         User user = userRepository.findByEmail(myEmail);
         if (user == null) {
-            throw new Exception("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            throw new Exception("Incorrect current password");
+            throw new UnauthorizedException("Incorrect current password");
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
-    public User updateName(String myEmail, String newName) throws Exception {
+    public User updateName(String myEmail, String newName) {
         User user = userRepository.findByEmail(myEmail);
         if (user == null) {
-            throw new Exception("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
         user.setName(newName.trim());
         return userRepository.save(user);
     }
 
+    public static class UserAlreadyExistsException extends RuntimeException {
+        public UserAlreadyExistsException(String message) {
+            super(message);
+        }
+    }
+
+    public static class UserNotFoundException extends RuntimeException {
+        public UserNotFoundException(String message) {
+            super(message);
+        }
+    }
+
+    public static class InvalidOperationException extends RuntimeException {
+        public InvalidOperationException(String message) {
+            super(message);
+        }
+    }
+
+    public static class UnauthorizedException extends RuntimeException {
+        public UnauthorizedException(String message) {
+            super(message);
+        }
+    }
 }

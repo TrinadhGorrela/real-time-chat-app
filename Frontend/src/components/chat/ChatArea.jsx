@@ -23,6 +23,16 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
   const [messageToDelete, setMessageToDelete] = useState(null);
   const [mediaToView, setMediaToView] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [prevContactEmail, setPrevContactEmail] = useState(activeContact?.email);
+
+  if (activeContact?.email !== prevContactEmail) {
+    setPrevContactEmail(activeContact?.email);
+    setMessages([]);
+    setTyping(false);
+    setStatus({ isOnline: false, lastSeen: null });
+    setMediaToView(null);
+    setLoading(true);
+  }
 
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
@@ -35,12 +45,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
   useEffect(() => {
     if (!activeContact || !user) return;
 
-    setMessages([]);
-    setTyping(false);
-    setStatus({ isOnline: false, lastSeen: null });
-    setMediaToView(null);
-    setLoading(true);
-
     chatService
       .getChatHistory(
         user.email.toLowerCase(),
@@ -49,7 +53,6 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
       .then((h) => setMessages(h || []))
       .catch(console.error)
       .finally(() => setLoading(false));
-
     authService
       .checkStatus(activeContact.email)
       .then((d) => setStatus({ isOnline: d.isOnline, lastSeen: d.lastSeen }))
@@ -62,7 +65,7 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
         status: "READ",
       });
     }
-  }, [activeContact?.email]);
+  }, [activeContact, connected, send, user]);
 
   useEffect(() => {
     if (!connected || !user) return;
@@ -145,7 +148,7 @@ const ChatArea = ({ activeContact, onDeleteFriend, onBack, onMessageSent }) => {
       typingSub?.unsubscribe();
       statusSub?.unsubscribe();
     };
-  }, [connected, user?.email]);
+  }, [connected, subscribe, send, user]);
 
   const scrollToBottom = () => {
     setTimeout(() => {

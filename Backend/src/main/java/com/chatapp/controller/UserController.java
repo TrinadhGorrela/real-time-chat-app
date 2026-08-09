@@ -1,7 +1,7 @@
 package com.chatapp.controller;
 
 import com.chatapp.entity.User;
-import com.chatapp.entity.Friendship;
+import com.chatapp.entity.Contact;
 import com.chatapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,11 +25,10 @@ public class UserController {
         try {
             User savedUser = userService.registerUser(user);
             return ResponseEntity.ok(savedUser);
+        } catch (UserService.UserAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
-            if (e.getMessage().equals("Email already exists")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of("message", "Email already exists"));
-            }
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "Registration failed"));
@@ -62,15 +61,14 @@ public class UserController {
         try {
             userService.sendFriendRequest(myEmail, targetEmail);
             return ResponseEntity.ok(Map.of("message", "Friend request sent successfully!"));
-        } catch (Exception e) {
+        } catch (UserService.UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+        } catch (UserService.InvalidOperationException e) {
             if (e.getMessage().equals("You cannot add yourself")) {
-                return ResponseEntity.badRequest().body(Map.of("message", "You cannot add yourself"));
-            } else if (e.getMessage().equals("User not found")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
-            } else if (e.getMessage().equals("Request already pending or you are already friends")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of("message", "Request already pending or you are already friends"));
+                return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
             }
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -79,9 +77,9 @@ public class UserController {
     // 4. GET PENDING REQUESTS
     // ============================================
     @GetMapping("/requests")
-    public ResponseEntity<List<Friendship>> getMyRequests(Principal principal) {
+    public ResponseEntity<List<Contact>> getMyRequests(Principal principal) {
         String myEmail = principal.getName();
-        List<Friendship> requests = userService.getPendingRequests(myEmail);
+        List<Contact> requests = userService.getPendingRequests(myEmail);
         return ResponseEntity.ok(requests);
     }
 
@@ -178,13 +176,11 @@ public class UserController {
         try {
             userService.updatePassword(myEmail, currentPassword, newPassword);
             return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+        } catch (UserService.UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+        } catch (UserService.UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
-            if (e.getMessage().equals("User not found")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
-            } else if (e.getMessage().equals("Incorrect current password")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("message", "Incorrect current password"));
-            }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -204,12 +200,10 @@ public class UserController {
         try {
             User updatedUser = userService.updateName(myEmail, newName);
             return ResponseEntity.ok(Map.of("message", "Name updated successfully", "newName", updatedUser.getName()));
+        } catch (UserService.UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
-            if (e.getMessage().equals("User not found")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
-            }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 }

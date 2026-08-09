@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MessageRepo extends JpaRepository<Message, Long> {
+public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Query("SELECT m FROM Message m WHERE " +
             "(LOWER(m.sender) = LOWER(:u1) AND LOWER(m.receiver) = LOWER(:u2)) OR " +

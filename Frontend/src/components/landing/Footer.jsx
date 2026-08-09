@@ -33,7 +33,7 @@ const Footer = () => {
       </div>
       <div className={styles.footerBottom}>
         <span>© 2026 Chat Application. All rights reserved.</span>
-        <span>Developed by Trinadh Gorrela</span>
+        <span>Developed by Siva Satya Trinadh Gorrela</span>
       </div>
     </footer>
   );
